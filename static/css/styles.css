@@ -60,8 +60,11 @@ nav > ul > li {
     justify-content: center;
 }
 
-nav a {
+a {
     text-decoration: none;
+}
+
+nav a {
     font-size: 0.9rem;
     color: white;
 }
@@ -87,6 +90,8 @@ footer {
     background: rgba(240, 240, 240, 0.8);
     font-size: 0.8rem;
 }
+
+/* Search Page */
 
 #search {
     width: 100%;
@@ -116,4 +121,60 @@ footer {
 #results-box > p:hover,
 #results-box > p:focus {
     background-color: #eee;
+}
+
+/* Admin Page Styles */
+#file-upload-form {
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    flex-direction: column;
+    gap: 15px;
+    background: #eee;
+    padding: 10px 20px 20px 20px;
+    border-radius: 15px;
+}
+
+#file-upload-form h2,
+#files-list-container h2 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+#file-upload-form h2 {
+    text-align: left;
+}
+
+#file-upload-form button {
+    width: 120px;
+    height: 27px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+#files-list-container {
+    margin-top: 20px;
+}
+
+#files-list-container h2 {
+    text-align: center;
+    margin-bottom: 0px;
+    padding: 10px 0px 0px 0px;
+}
+
+#file-list {
+    padding: 0;
+    list-style: none;
+    font-size: 0.85rem;
+    border: 0.5px solid #edecec;
+}
+
+#file-list li {
+    margin-bottom: 2px;
+    padding: 8px 10px;
+}
+
+#file-list li:nth-of-type(even) {
+    background: rgba(240, 240, 240, 0.8);
 }

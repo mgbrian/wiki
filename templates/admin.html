@@ -3,5 +3,20 @@
 {% block title %} - Admin{% endblock %}
 
 {% block content %}
-    <h1>Wiki ADMIN</h1>
+
+<form id="file-upload-form" method="POST">
+    <h2>Upload File</h2>
+    <input type="file" id="file-input" name="file">
+    <button type="submit">Upload</button>
+</form>
+
+<div id="files-list-container">
+    <h2>Uploaded Files</h2>
+    <ul id="file-list"></ul>
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
 {% endblock %}
