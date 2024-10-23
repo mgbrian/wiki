@@ -7,3 +7,7 @@
 <!-- Container for search results. Hidden when empty. -->
 <div id="results-box" class="hidden"></div>
 {% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}
