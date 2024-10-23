@@ -3,5 +3,7 @@
 {% block title %} - Home{% endblock %}
 
 {% block content %}
-    <h1>Wiki HOME</h1>
+<input type="text" placeholder="Type to search..." id="search" autocomplete="off"/>
+<!-- Container for search results. Hidden when empty. -->
+<div id="results-box" class="hidden"></div>
 {% endblock %}

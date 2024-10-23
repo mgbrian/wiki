@@ -1,0 +1,75 @@
+:root {
+    --search-box-height: 40px;
+    --content-max-width: 600px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+main {
+    /* So the absolute-positioned results box is positioned
+  relative to this and not the entire document. */
+    position: relative;
+    width: 80%;
+    max-width: var(--content-max-width);
+    margin-top: 25vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+}
+
+nav {
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(240, 240, 240, 0.8);
+}
+
+#search {
+    width: 100%;
+    height: var(--search-box-height);
+    padding: 5px;
+}
+
+#results-box {
+    position: absolute;
+    /* Offset by height of search box so it's directly under it. */
+    top: var(--search-box-height);
+    width: 100%;
+    border: 1px solid grey;
+    padding: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* For country names in the results box. */
+#results-box > p {
+    padding: 10px 5px;
+    margin: 0;
+}
+
+#results-box > p:hover,
+#results-box > p:focus {
+    background-color: #eee;
+}
