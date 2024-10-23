@@ -1,6 +1,6 @@
 import os
 
-from quart import Quart, render_template
+from quart import Quart, render_template, jsonify
 
 import env
 
@@ -17,3 +17,13 @@ async def index():
 @app.route('/admin', methods=['GET'])
 async def admin():
     return await render_template('admin.html')
+
+
+@app.route('/search', methods=['POST'])
+async def search():
+    dummy_data = [
+        {'text': 'cat'},
+        {'text': 'dog'},
+        {'text': 'monkey'}
+    ]
+    return jsonify(dummy_data)
