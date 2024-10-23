@@ -163,3 +163,5 @@ cython_debug/
 
 
 env.py
+# venv folder
+.requirements/
