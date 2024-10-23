@@ -28,19 +28,62 @@ main {
     flex-direction: column;
 }
 
+header,
+footer {
+    position: fixed;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 header {
+    background: rgba(0, 0, 0, 0.8);
+    top: 0;
 }
 
 nav {
+    width: 90%;
+    max-width: 1800px;
+}
+
+nav > ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav > ul > li {
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+nav a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: white;
+}
+
+nav a:hover {
+    /* text-decoration: underline; */
+    font-weight: bold;
+}
+
+nav .logo {
+    margin-right: auto;
+}
+
+nav .logo a {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 footer {
     position: fixed;
     bottom: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: rgba(240, 240, 240, 0.8);
 }
 

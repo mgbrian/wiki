@@ -12,8 +12,10 @@
     <body>
         <header>
             <nav>
-                <a href="{{ url_for('index') }}">Home</a>
-                <a href="{{ url_for('admin') }}">Admin</a>
+                <ul>
+                    <li class="logo"><a href="{{ url_for('index') }}">WIKI</a></li>
+                    <li><a href="{{ url_for('admin') }}">Admin</a></li>
+                </ul>
             </nav>
         </header>
 
