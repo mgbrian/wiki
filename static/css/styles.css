@@ -85,6 +85,7 @@ footer {
     position: fixed;
     bottom: 0;
     background: rgba(240, 240, 240, 0.8);
+    font-size: 0.8rem;
 }
 
 #search {
