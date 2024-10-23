@@ -5,3 +5,7 @@ pgvector
 
 numpy
 ollama
+
+# Need to brew install poppler on macOS
+# TODO: Add this to install script.
+pdf2image
