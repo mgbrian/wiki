@@ -178,3 +178,7 @@ footer {
 #file-list li:nth-of-type(even) {
     background: rgba(240, 240, 240, 0.8);
 }
+
+#file-list a {
+    color: #4d74b8;
+}
