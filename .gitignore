@@ -166,3 +166,4 @@ env.py
 # venv folder
 .requirements/
 media/
+.DS_Store
