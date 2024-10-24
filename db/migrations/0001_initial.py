@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('number', models.IntegerField()),
-                ('filepath', models.FilePathField(path=db.models.document_pages_path)),
+                ('filepath', models.FilePathField(path=db.models.documents_path)),
                 ('contents_summary', models.TextField()),
                 ('document', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pages', to='db.document')),
                 ('previous', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='next', to='db.page')),

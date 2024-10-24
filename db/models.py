@@ -8,11 +8,6 @@ def documents_path():
     return os.path.abspath(os.path.join(settings.BASE_DIR, '../media'))
 
 
-def document_pages_path():
-    # TODO: Decide structure.
-    return ''
-
-
 class Document(models.Model):
     name = models.CharField(max_length=255)
     filepath = models.FilePathField(path=documents_path)
@@ -25,7 +20,7 @@ class Page(models.Model):
     number = models.IntegerField()
     previous = models.OneToOneField('Page', on_delete=models.CASCADE,
         related_name='next', blank=True, null=True)
-    filepath = models.FilePathField(path=document_pages_path)
+    filepath = models.FilePathField(path=documents_path, recursive=True)
     contents_summary = models.TextField()
 
 
