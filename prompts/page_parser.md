@@ -8,9 +8,9 @@ Respond with valid JSON in the following format:
 
 ```json
 {
-  "text": // The text,
-  "summary": // One to two sentence summary of the text,
-  "description": // A description of what's on the page e.g. topics covered, any diagrams relevant to the material, etc.,
+  "text": // The text or null if there is no topic-relevant text,
+  "summary": // One to two sentence summary of the text or null if text is null,
+  "description": // A description of what's on the page e.g. topics covered, any diagrams relevant to the material, etc. If the page doesn't contain any topic-relevant material, just describe what's on the page e.g."the page is empty" or "the page contains doodlings", etc,
   "requestNextPage": // true or false -- set this to false if the text appears incomplete.,
 }
 ```
