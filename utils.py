@@ -28,8 +28,18 @@ async def save_pdf_as_images(pdf_path, output_folder, dpi=200):
         os.makedirs(output_folder)
 
     save_tasks = []
+    pages = []
     for i, image in enumerate(images):
-        output_image_path = os.path.join(output_folder, f'{i+1}.png')
+        page_number = i + 1
+        output_image_path = os.path.join(output_folder, f'{page_number}.png')
+        pages.append(
+            {
+                'number': page_number,
+                'filepath': output_image_path,
+            }
+        )
         save_tasks.append(save_image(image, output_image_path))
 
     await asyncio.gather(*save_tasks)
+
+    return pages

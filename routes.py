@@ -5,7 +5,7 @@ import aiofiles
 from asgiref.sync import sync_to_async
 from quart import Quart, render_template, request, jsonify, send_from_directory, websocket
 
-from db.models import Document
+from db.models import Document, Page
 import env
 import utils
 
@@ -94,8 +94,21 @@ async def upload_file():
         # TODO: Better way to do this!
         document.status = 1
 
-        asyncio.create_task(document.asave())
-        asyncio.create_task(broadcast_document_update(document))
+        document_save_task = asyncio.create_task(document.asave())
+        document_status_broadcast_task = asyncio.create_task(
+            broadcast_document_update(document)
+        )
+
+        pages = document_splitter_task.result()
+
+        for p in pages:
+            page_creation_task = asyncio.create_task(
+                Page.objects.acreate(
+                    document=document,
+                    number=p['number'],
+                    filepath=p['filepath']
+                )
+            )
 
     document_splitter_task = asyncio.create_task(
         utils.save_pdf_as_images(filepath, document_pages_folder)
