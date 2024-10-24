@@ -50,15 +50,29 @@ async function fetchFileList() {
     fileList.innerHTML = "";
 
     for (let file of files) {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = `/files/${file.filename}`;
-      a.textContent = file.filename;
-      a.setAttribute("target", "_blank");
-      li.appendChild(a);
-      fileList.appendChild(li);
+      renderFileDisplay(file);
     }
   } catch (error) {
     console.error("Error fetching file list:", error);
   }
+}
+
+function renderFileDisplay(file) {
+  const li = document.createElement("li");
+  li.dataset.status = file.status;
+  li.dataset.id = file.id || null;
+
+  const fileLink = document.createElement("a");
+  fileLink.href = `/files/${file.filename}`;
+  fileLink.textContent = file.filename;
+  fileLink.setAttribute("target", "_blank");
+
+  const statusIndicator = document.createElement("small");
+  statusIndicator.textContent = file.status;
+  statusIndicator.classList.add("file-status-indicator");
+
+  li.appendChild(fileLink);
+  li.appendChild(statusIndicator);
+
+  fileList.appendChild(li);
 }

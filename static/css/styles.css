@@ -171,6 +171,8 @@ footer {
 }
 
 #file-list li {
+    display: flex;
+    align-items: center;
     margin-bottom: 2px;
     padding: 8px 10px;
 }
@@ -181,4 +183,28 @@ footer {
 
 #file-list a {
     color: #4d74b8;
+}
+
+#file-list .file-status-indicator {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.65rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#file-list [data-status="Processing"] .file-status-indicator {
+    background: #eee;
+    color: #333;
+}
+
+#file-list [data-status="Ready"] .file-status-indicator {
+    background: #88c273;
+    color: #fff;
+}
+
+#file-list [data-status="Error"] .file-status-indicator {
+    background: #f95454;
+    color: white;
 }
