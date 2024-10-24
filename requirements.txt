@@ -4,7 +4,6 @@ psycopg2-binary
 pgvector
 
 numpy
-ollama
 
 # Need to brew install poppler on macOS
 # TODO: Add this to install script.
@@ -14,3 +13,10 @@ aiofiles
 
 jinja2
 pydantic
+requests
+
+# Uncomment if using OpenAI or Groq models.
+# openai
+# groq
+ollama
+google-generativeai
