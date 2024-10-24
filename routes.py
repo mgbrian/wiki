@@ -1,8 +1,11 @@
+import asyncio
 import os
 
 import aiofiles
+from asgiref.sync import sync_to_async
 from quart import Quart, render_template, request, jsonify, send_from_directory
 
+from db.models import Document
 import env
 
 
@@ -54,26 +57,20 @@ async def upload_file():
         'path': filepath
     }
 
-    # TODO: ** Save file metadata to DB here.**
+    _ = await Document.objects.acreate(name=filename, filepath=filepath)
 
     return jsonify({"message": "File uploaded successfully", 'metadata': file_metadata})
 
 
 @app.route('/files', methods=['GET'])
 async def list_files():
-    # TODO: ** Get these from DB. **
 
-    files_list = []
+    documents = await sync_to_async(list)(Document.objects.all())
 
-    # List *files* in the upload directory.
-    for item in os.listdir(UPLOAD_FOLDER):
-        full_path = os.path.join(UPLOAD_FOLDER, item)
-
-        if os.path.isfile(full_path):
-            files_list.append({
-                'filename': item,
-                'path': full_path
-            })
+    files_list = [
+        {"filename": document.name, "filepath": document.filepath}
+        for document in documents
+    ]
 
     return jsonify(files_list), 200
 
