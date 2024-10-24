@@ -7,6 +7,7 @@ from quart import Quart, render_template, request, jsonify, send_from_directory,
 
 from db.models import Document
 import env
+import utils
 
 
 app = Quart(__name__)
@@ -19,6 +20,12 @@ UPLOAD_FOLDER = os.path.join(
 
 # To keep track of socket connections.
 connected_clients = {}
+
+# To keep track of async tasks running in the bg
+# See note below on keeping a reference to tasks:
+# https://docs.python.org/3/library/asyncio-task.html#asyncio.create_task
+background_tasks = set()
+
 
 @app.route('/', methods=['GET'])
 async def index():
@@ -60,7 +67,25 @@ async def upload_file():
         'path': filepath
     }
 
-    _ = await Document.objects.acreate(name=filename, filepath=filepath)
+    document = await Document.objects.acreate(name=filename, filepath=filepath)
+    file_metadata['id'] = document.id
+
+    document_pages_folder = os.path.join(os.path.dirname(filepath), str(document.id))
+
+    def document_splitter_task_callback(document_splitter_task):
+        """Update document status after page splitting is done."""
+        # TODO: Handle errors here and in running the task.
+        background_tasks.discard(document_splitter_task)
+        # TODO: Better way to do this!
+        document.status = 1
+        asyncio.create_task(document.asave())
+
+    document_splitter_task = asyncio.create_task(
+        utils.save_pdf_as_images(filepath, document_pages_folder)
+    )
+
+    background_tasks.add(document_splitter_task)
+    document_splitter_task.add_done_callback(document_splitter_task_callback)
 
     return jsonify({"message": "File uploaded successfully", 'metadata': file_metadata})
 
