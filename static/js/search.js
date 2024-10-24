@@ -1,28 +1,28 @@
-const SEARCH_INPUT_BOX = document.getElementById("search");
-const RESULTS_BOX = document.getElementById("results-box");
+const searchInputBox = document.getElementById("search");
+const resultsBox = document.getElementById("results-box");
 
 const SEARCH_ENDPOINT = "/search";
 
-SEARCH_INPUT_BOX.addEventListener("input", updateSearchResults);
+searchInputBox.addEventListener("input", updateSearchResults);
 
 /* Send the current contents of the search box to the backend and update the
    results box with the results.
 */
 async function updateSearchResults() {
   // Clear the results box of its current contents.
-  RESULTS_BOX.innerHTML = "";
-  let searchResults = await search(SEARCH_INPUT_BOX.value);
+  resultsBox.innerHTML = "";
+  let searchResults = await search(searchInputBox.value);
 
   // Hide the results box if there are no results to show. It is hidden by
   // default -- see HTML/CSS.
   if (searchResults.length > 0) {
-    RESULTS_BOX.classList.remove("hidden");
+    resultsBox.classList.remove("hidden");
   } else {
-    RESULTS_BOX.classList.add("hidden");
+    resultsBox.classList.add("hidden");
   }
 
   for (let result of searchResults) {
-    RESULTS_BOX.innerHTML += `<p class="search-result">${result.text}</p>`;
+    resultsBox.innerHTML += `<p class="search-result">${result.text}</p>`;
   }
 }
 

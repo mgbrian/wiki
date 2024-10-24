@@ -5,6 +5,10 @@ socket.onopen = () => {
   socket.send(clientId);
 };
 
+socket.onclose = () => {
+  console.log("WebSocket connection closed");
+};
+
 socket.onmessage = handleServerMessage;
 
 /* Handle a message from the server.
@@ -34,7 +38,3 @@ function handleServerMessage(event) {
       doc.status;
   }
 }
-
-socket.onclose = () => {
-  console.log("WebSocket connection closed");
-};
