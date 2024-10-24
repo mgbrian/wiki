@@ -43,3 +43,24 @@ async def save_pdf_as_images(pdf_path, output_folder, dpi=200):
     await asyncio.gather(*save_tasks)
 
     return pages
+
+
+def read_text_file(filepath, ignore_comments=False):
+    """Read and return the contents of a text file.
+
+    Preconditions: File contains text content.
+
+    Args:
+        filepath: str - The full path to the file to read.
+        ignore_comments: bool - Whether or not to leave out comments
+            (lines starting with a '#') when reading the file. Default False,
+            i.e. all lines returned.
+
+    Returns:
+        str - The contents of the file.
+    """
+    with open(filepath) as text_file:
+        return ''.join([
+            line for line in text_file.readlines()
+            if not ignore_comments or not line.startswith("#")
+        ])

@@ -11,3 +11,6 @@ ollama
 pdf2image
 
 aiofiles
+
+jinja2
+pydantic
