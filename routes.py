@@ -68,7 +68,7 @@ async def list_files():
     documents = await sync_to_async(list)(Document.objects.all())
 
     files_list = [
-        {"filename": document.name, "filepath": document.filepath}
+        {"filename": document.name, "filepath": document.filepath, "status": document.status}
         for document in documents
     ]
 

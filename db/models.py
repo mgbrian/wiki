@@ -8,10 +8,24 @@ def documents_path():
     return os.path.abspath(os.path.join(settings.BASE_DIR, '../media'))
 
 
+DOCUMENT_STATUS_CODES = (
+    (0, "Processing"),
+    (1, "Ready"),
+    (2, "Error"),
+)
+
+PAGE_STATUS_CODES = (
+    (0, "Processing"),
+    (1, "Ready"),
+    (2, "Error"),
+)
+
+
 class Document(models.Model):
     name = models.CharField(max_length=255)
     filepath = models.FilePathField(path=documents_path)
     contents_summary = models.TextField()
+    status = models.IntegerField(choices=DOCUMENT_STATUS_CODES, default=0)
 
 
 class Page(models.Model):
@@ -22,6 +36,7 @@ class Page(models.Model):
         related_name='next', blank=True, null=True)
     filepath = models.FilePathField(path=documents_path, recursive=True)
     contents_summary = models.TextField()
+    status = models.IntegerField(choices=PAGE_STATUS_CODES, default=0)
 
 
 class Proposition(models.Model):
