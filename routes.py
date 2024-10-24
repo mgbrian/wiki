@@ -3,7 +3,7 @@ import os
 
 import aiofiles
 from asgiref.sync import sync_to_async
-from quart import Quart, render_template, request, jsonify, send_from_directory
+from quart import Quart, render_template, request, jsonify, send_from_directory, websocket
 
 from db.models import Document
 import env
@@ -16,6 +16,9 @@ UPLOAD_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     'media/'
 )
+
+# To keep track of socket connections.
+connected_clients = {}
 
 @app.route('/', methods=['GET'])
 async def index():
@@ -84,3 +87,22 @@ async def list_files():
 async def serve_file(filename):
     # TODO: Use a better identifier than filename.
     return await send_from_directory(UPLOAD_FOLDER, filename)
+
+
+@app.websocket('/ws/status/')
+async def status_socket():
+    # Connect new client.
+    client_id = await websocket.receive()
+    connected_clients[client_id] = websocket
+
+    # Acknowldege connection.
+    await websocket.send_json({'action': 'connection-ack'})
+
+    # Ongoing while loop to keep the WebSocket connection open.
+    try:
+        while True:
+            await websocket.receive()
+    except Exception:
+        # Handle client disconnects/errors.
+        if client_id in connected_clients:
+            del connected_clients[client_id]
