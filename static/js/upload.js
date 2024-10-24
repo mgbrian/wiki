@@ -28,7 +28,7 @@ async function uploadFile(event) {
     });
 
     if (response.ok) {
-      alert("File uploaded successfully!");
+      // alert("File uploaded successfully!");
       // Reset file input and refresh file list
       fileInput.value = "";
       fetchFileList();

@@ -25,10 +25,13 @@ function handleServerMessage(event) {
   if (message.action === "connection-ack") {
     console.log(`WebSocket connection established. Client id ${clientId}`);
   } else if (message.action === "file-status-update") {
-    fileLiElement = document.querySelector(`#file-list [data-id="1"]`);
-    fileLiElement.dataset.status = message.payload.status;
-    fileLiElement.querySelector("file-status-indicator").textContent =
-      message.payload.status;
+    // TODO: Need to ensure that an entry for the element exists as this could be
+    // a different client from the uploader's.
+    const doc = message.payload;
+    fileLiElement = document.querySelector(`#file-list [data-id="${doc.id}"]`);
+    fileLiElement.dataset.status = doc.status;
+    fileLiElement.querySelector(".file-status-indicator").textContent =
+      doc.status;
   }
 }
 

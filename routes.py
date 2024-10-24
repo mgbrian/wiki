@@ -47,6 +47,21 @@ async def search():
     return jsonify(dummy_data)
 
 
+async def broadcast_document_update(document):
+    """Update all clients of a document status change."""
+    for client in connected_clients.values():
+        await client.send_json(
+            {
+              'action': 'file-status-update',
+              'payload': {
+                  'filename': document.name,
+                  'id': document.id,
+                'status': document.get_status_display()
+              }
+            }
+        )
+
+
 @app.route('/upload', methods=['POST'])
 async def upload_file():
     form = await request.files
@@ -78,7 +93,9 @@ async def upload_file():
         background_tasks.discard(document_splitter_task)
         # TODO: Better way to do this!
         document.status = 1
+
         asyncio.create_task(document.asave())
+        asyncio.create_task(broadcast_document_update(document))
 
     document_splitter_task = asyncio.create_task(
         utils.save_pdf_as_images(filepath, document_pages_folder)
@@ -118,7 +135,7 @@ async def serve_file(filename):
 async def status_socket():
     # Connect new client.
     client_id = await websocket.receive()
-    connected_clients[client_id] = websocket
+    connected_clients[client_id] = websocket._get_current_object()
 
     # Acknowldege connection.
     await websocket.send_json({'action': 'connection-ack'})
