@@ -1,7 +1,8 @@
 const pageThumbnailContainers = document.querySelectorAll(".page-thumbnail");
 const pageDisplay = document.querySelector("#page-display");
 const PAGE_IMAGE_ENDPOINT_PREFIX = "/page";
-let validPageNumbers = new Set(); // Used to weed out invalid page numbers passed through the url.
+// Used to weed out invalid page numbers passed through the url.
+let validPageNumbers = new Set();
 
 document.addEventListener("DOMContentLoaded", () => {
   for (let pageThumbnailContainer of pageThumbnailContainers) {
@@ -20,11 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("hashchange", navigateToPage);
 
-/* Update the navigation with the page number fragment and display the page.
-
-  @param {number} pageNumber - The page to "navigate" to.
-  @param {number} pageId - The id of the page.
-*/
+/* Display the page with the number in the url # fragment, if it exists. */
 function navigateToPage() {
   if (window.location.hash) {
     let pageNumber = parseInt(window.location.hash.substring(1));
@@ -35,7 +32,10 @@ function navigateToPage() {
   }
 }
 
-/* Display a page. */
+/* Display a page, given its number.
+
+  @param {number} pageNumber - The page to "navigate" to.
+*/
 function displayPage(pageNumber) {
   pageDisplay.innerHTML = "";
 
