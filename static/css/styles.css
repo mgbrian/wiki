@@ -253,6 +253,7 @@ footer {
     gap: 15px;
     height: var(--thumbnail-carousel-height);
     width: 100%;
+    overflow-x: scroll;
     padding: 10px 30px;
     background-color: #eee;
 }
@@ -263,6 +264,11 @@ footer {
     flex-direction: column;
     gap: 5px;
     height: 100%;
+    /* aspect-ratio: 1; */
+    overflow: hidden;
+    border: 1px solid black;
+    border-radius: 5px;
+    background: #fff;
 }
 
 .page-thumbnail:hover {
@@ -270,8 +276,10 @@ footer {
 
 .page-thumbnail > img {
     height: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
+    /* aspect-ratio: 1; */
+    /* A4 aspect ratio. */
+    aspect-ratio: 1 / 1.41;
+    object-fit: contain;
 }
 
 .page-thumbnail > small {
