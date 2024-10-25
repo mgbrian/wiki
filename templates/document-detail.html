@@ -12,8 +12,8 @@
 <div id="page-thumbnail-carousel-container">
     <div id="page-thumbnail-carousel">
         {% for page in document.pages.all() %}
-        <div class="page-thumbnail" data-page-id="{{ page.id }}">
-            <img src="{{ url_for('serve_page_image', id=page.id) }}">
+        <div class="page-thumbnail" data-page-id="{{ page.id }}" data-page-number="{{ page.number }}">
+            <img src="{{ url_for('serve_page_image', document_id= document.id, number=page.number) }}">
             <small class="page-number">
             {{ page.number }}
             </small>
@@ -28,5 +28,8 @@
 {% endblock %}
 
 {% block page_js %}
+<script>
+  const DOCUMENT_ID = {{ document.id }};
+</script>
 <script src="{{ url_for('static', filename='js/page-viewer.js') }}"></script>
 {% endblock %}

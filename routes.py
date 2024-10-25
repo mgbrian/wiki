@@ -50,11 +50,16 @@ async def search():
 
         if search_term:
             # Simple search:
-            queryset = Page.objects.filter(text__icontains=search_term)
+            queryset = Page.objects.filter(text__icontains=search_term).select_related('document')
 
             async for page in queryset:
                 results.append(
                     {
+                        'document': {
+                            'id': page.document.id,
+                            'name': page.document.name,
+                        },
+                        'number': page.number,
                         'id': page.number,
                         'number': page.number,
                         'text': page.text,
@@ -165,10 +170,10 @@ async def serve_file(filename):
     return await send_from_directory(UPLOAD_FOLDER, filename)
 
 
-@app.route('/page/<id>', methods=['GET'])
-async def serve_page_image(id):
+@app.route('/page/<document_id>/<number>', methods=['GET'])
+async def serve_page_image(document_id, number):
     try:
-        page = await Page.objects.aget(id=id)
+        page = await Page.objects.aget(document=document_id, number=number)
         return await send_file(page.filepath)
 
     except Page.DoesNotExist:
