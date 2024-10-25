@@ -76,8 +76,51 @@ function renderFileDisplay(file) {
   statusIndicator.textContent = file.status;
   statusIndicator.classList.add("file-status-indicator");
 
+  const deleteButton = document.createElement("a");
+  deleteButton.classList.add("delete-button");
+  deleteButton.addEventListener("click", async () => {
+    if (!confirm("Are you sure you want to delete the document?")) {
+      return;
+    }
+    if (await deleteDocument(file.id)) {
+      li.remove();
+    } else {
+      alert("There was a problem deleting the document.");
+    }
+  });
+
+  const deleteButtonIcon = document.createElement("span");
+  deleteButtonIcon.classList.add("material-symbols-outlined");
+  deleteButtonIcon.textContent = "delete";
+  deleteButton.appendChild(deleteButtonIcon);
+
   li.appendChild(fileLink);
   li.appendChild(statusIndicator);
+  li.appendChild(deleteButton);
 
   fileList.appendChild(li);
+}
+
+/* Delete a document, given its id.
+
+  @returns {boolean} - true if document is successfully deleted. False otherwise.
+*/
+async function deleteDocument(documentId) {
+  const deleteEndpoint = `/document/${documentId}/delete`;
+
+  try {
+    const response = await fetch(deleteEndpoint);
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+    console.log("Delete successful:", responseData);
+
+    return true;
+  } catch (error) {
+    console.error("Error: ", error);
+    return false;
+  }
 }

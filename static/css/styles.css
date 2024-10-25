@@ -210,6 +210,19 @@ footer {
     color: #4d74b8;
 }
 
+#file-list .delete-button {
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+
+#file-list .delete-button:hover,
+#file-list .delete-button:focus {
+    color: #ba7171;
+}
+
 #file-list .file-status-indicator {
     margin-left: auto;
     padding: 2px 8px;
