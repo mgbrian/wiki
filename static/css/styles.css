@@ -22,6 +22,7 @@ body {
     height: 100vh;
     align-items: center;
     font-family: sans-serif;
+    margin: 0;
 }
 
 main {
@@ -203,7 +204,7 @@ footer {
     padding: 8px 10px;
 }
 
-#file-list li:nth-of-type(even) {
+#file-list li:nth-of-type(odd) {
     background: rgba(240, 240, 240, 0.8);
 }
 
@@ -253,6 +254,8 @@ footer {
 main.document-detail-page {
     margin-top: 0;
     padding: 0;
+    position: fixed;
+    top: 0;
 }
 
 #document-info {
@@ -260,7 +263,7 @@ main.document-detail-page {
     flex-direction: row;
     align-items: center;
     /* position: fixed; */
-    margin-top: calc(var(--header-height) - 0px);
+    margin-top: calc(var(--header-height) + 10px);
     width: 100%;
 }
 
