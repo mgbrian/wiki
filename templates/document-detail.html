@@ -3,28 +3,31 @@
 {% block title %} - {{ document.name }} {% endblock %}
 
 {% block content %}
-
-<h2>{{ document.name }}</h2>
-<small class="document-status-indicator"> {{ document.get_status_display() }} </small>
-
-<div id="page-display"></div>
-
-<div id="page-thumbnail-carousel-container">
-    <div id="page-thumbnail-carousel">
-        {% for page in document.pages.all() %}
-        <div class="page-thumbnail" data-page-id="{{ page.id }}" data-page-number="{{ page.number }}">
-            <img src="{{ url_for('serve_page_image', document_id= document.id, number=page.number) }}">
-            <small class="page-number">
-            {{ page.number }}
-            </small>
-            <small class="page-status-indicator">
-            {{ page.get_status_display() }}
-            </small>
-        </div>
-        {% endfor %}
+<main class="document-detail-page">
+    <div id="document-info">
+        <h2>{{ document.name }}</h2>
+        <small class="document-status-indicator"> {{ document.get_status_display() }} </small>
     </div>
-</div>
 
+
+    <div id="page-display"></div>
+
+    <div id="page-thumbnail-carousel-container">
+        <div id="page-thumbnail-carousel">
+            {% for page in document.pages.all() %}
+            <div class="page-thumbnail" data-page-id="{{ page.id }}" data-page-number="{{ page.number }}">
+                <img src="{{ url_for('serve_page_image', document_id= document.id, number=page.number) }}">
+                <small class="page-number">
+                {{ page.number }}
+                </small>
+                <small class="page-status-indicator">
+                {{ page.get_status_display() }}
+                </small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
 {% endblock %}
 
 {% block page_js %}

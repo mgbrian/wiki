@@ -236,6 +236,30 @@ footer {
 
 /* Document Detail Page Styles */
 
+main.document-detail-page {
+    margin-top: 0;
+    padding: 0;
+}
+
+#document-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /* position: fixed; */
+    margin-top: calc(var(--header-height) - 0px);
+    width: 100%;
+}
+
+#document-info h2 {
+    padding: 0;
+    margin: 0 auto;
+    font-size: 1.1rem;
+}
+
+#document-info .document-status-indicator {
+    display: none;
+}
+
 #page-display {
     position: fixed;
     bottom: 0;
@@ -323,7 +347,8 @@ footer {
     font-weight: bold;
 }
 
-.page-thumbnail:hover .page-number {
+.page-thumbnail:hover .page-number,
+.page-thumbnail.active-page .page-number {
     display: flex;
     justify-content: center;
     align-items: center;

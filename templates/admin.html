@@ -3,18 +3,18 @@
 {% block title %} - Admin{% endblock %}
 
 {% block content %}
+<main>
+    <form id="file-upload-form" method="POST">
+        <h2>Upload File</h2>
+        <input type="file" id="file-input" name="file">
+        <button type="submit">Upload</button>
+    </form>
 
-<form id="file-upload-form" method="POST">
-    <h2>Upload File</h2>
-    <input type="file" id="file-input" name="file">
-    <button type="submit">Upload</button>
-</form>
-
-<div id="files-list-container">
-    <h2>Library</h2>
-    <ul id="file-list"></ul>
-</div>
-
+    <div id="files-list-container">
+        <h2>Library</h2>
+        <ul id="file-list"></ul>
+    </div>
+</main>
 {% endblock %}
 
 {% block page_js %}
