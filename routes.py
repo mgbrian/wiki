@@ -5,6 +5,7 @@ import os
 import aiofiles
 from asgiref.sync import sync_to_async
 from django.contrib.postgres.search import TrigramSimilarity
+import magic
 from quart import (Quart, render_template, request, jsonify, send_from_directory,
     send_file, websocket, abort)
 
@@ -97,6 +98,22 @@ async def upload_file():
     if not file:
         return jsonify({"error": "No file provided."}), 400
 
+    mime = magic.Magic(mime=True)
+    # Read small chunk to detect mimetype
+    file_type = mime.from_buffer(file.read(1024))
+    file.seek(0)
+
+    if file_type == 'application/pdf':
+        split_document = True
+
+    elif file_type.startswith('image/'):
+        # TODO: Perhaps standardize image params e.g. resolution, size limits, etc.
+        # Do this for both PDF pages and standalone images.
+        split_document = False
+
+    else:
+        return jsonify({"error": "File must be a pdf or image."}), 400
+
     filename = file.filename
     filepath = os.path.join(UPLOAD_FOLDER, filename)
 
@@ -111,37 +128,50 @@ async def upload_file():
     document = await Document.objects.acreate(name=filename, filepath=filepath)
     file_metadata['id'] = document.id
 
-    document_pages_folder = os.path.join(os.path.dirname(filepath), str(document.id))
+    # Split PDF into separate image files.
+    if split_document:
+        def document_splitter_task_callback(document_splitter_task):
+            """Update document status after page splitting is done."""
+            # TODO: Handle errors here and in running the task.
+            background_tasks.discard(document_splitter_task)
+            # TODO: Better way to do this!
+            document.status = 1
 
-    def document_splitter_task_callback(document_splitter_task):
-        """Update document status after page splitting is done."""
-        # TODO: Handle errors here and in running the task.
-        background_tasks.discard(document_splitter_task)
-        # TODO: Better way to do this!
+            document_save_task = asyncio.create_task(document.asave())
+            document_status_broadcast_task = asyncio.create_task(
+                broadcast_document_update(document)
+            )
+
+            pages = document_splitter_task.result()
+
+            for p in pages:
+                page_creation_task = asyncio.create_task(
+                    Page.objects.acreate(
+                        document=document,
+                        number=p['number'],
+                        filepath=p['filepath']
+                    )
+                )
+
+        document_pages_folder = os.path.join(os.path.dirname(filepath), str(document.id))
+        document_splitter_task = asyncio.create_task(
+            utils.save_pdf_as_images(filepath, document_pages_folder)
+        )
+        background_tasks.add(document_splitter_task)
+        document_splitter_task.add_done_callback(document_splitter_task_callback)
+
+    # If document is an image.
+    else:
         document.status = 1
-
-        document_save_task = asyncio.create_task(document.asave())
+        await document.asave()
         document_status_broadcast_task = asyncio.create_task(
             broadcast_document_update(document)
         )
-
-        pages = document_splitter_task.result()
-
-        for p in pages:
-            page_creation_task = asyncio.create_task(
-                Page.objects.acreate(
-                    document=document,
-                    number=p['number'],
-                    filepath=p['filepath']
-                )
-            )
-
-    document_splitter_task = asyncio.create_task(
-        utils.save_pdf_as_images(filepath, document_pages_folder)
-    )
-
-    background_tasks.add(document_splitter_task)
-    document_splitter_task.add_done_callback(document_splitter_task_callback)
+        await Page.objects.acreate(
+            document=document,
+            number=1,
+            filepath=filepath
+        )
 
     return jsonify({"message": "File uploaded successfully", 'metadata': file_metadata})
 

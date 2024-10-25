@@ -60,6 +60,7 @@ class Proposition(models.Model):
 @receiver(post_save, sender=Page)
 def parse_page(sender, instance, created, **kwargs):
     """Parse a Page on creation."""
+    # TODO: Do this asynchronously/in another thread as it blocks the server.
     if created:
         try:
             page_image = Image(instance.filepath)

@@ -20,3 +20,8 @@ requests
 # groq
 ollama
 google-generativeai
+
+# Need to brew install libmagic on macOS
+# or sudo apt-get install libmagic1 on Debian
+# TODO: Add to install script.
+python-magic
