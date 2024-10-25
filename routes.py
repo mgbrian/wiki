@@ -1,4 +1,5 @@
 import asyncio
+from functools import wraps
 import json
 import os
 
@@ -6,10 +7,10 @@ import aiofiles
 from asgiref.sync import sync_to_async
 from django.contrib.postgres.search import TrigramSimilarity
 import magic
-from quart import (Quart, render_template, request, jsonify, send_from_directory,
-    send_file, websocket, abort)
+from quart import (Quart, render_template, redirect, request, jsonify, session,
+    url_for, send_from_directory, send_file, websocket, abort)
 
-from db.models import Document, Page
+from db.models import Document, Page, User
 import env
 import utils
 
@@ -31,17 +32,83 @@ connected_clients = {}
 background_tasks = set()
 
 
+def login_required(f):
+    """View decorator to confirm login. Redirects to login page on failure."""
+    @wraps(f)
+    async def decorated_view(*args, **kwargs):
+        if "username" not in session:
+            return redirect(url_for("login"))
+
+        return await f(*args, **kwargs)
+
+    return decorated_view
+
+
+def admin_required(f):
+    """View decorator to confirm admin status. Redirects home on failure."""
+    @wraps(f)
+    async def decorated_view(*args, **kwargs):
+        if "username" not in session:
+            return redirect(url_for("login"))
+
+        user = await User.objects.aget(username=session["username"])
+
+        if not user or not user.is_admin:
+            return redirect(url_for("index"))
+
+        return await f(*args, **kwargs)
+
+    return decorated_view
+
+
+@app.route("/login", methods=["GET", "POST"])
+async def login():
+    if "username" in session:
+        return redirect(url_for("index"))
+
+    error_message = ""
+    if request.method == "POST":
+        form_data = await request.form
+        username = form_data.get("username")
+        password = form_data.get("password")
+
+        try:
+            user = await User.objects.aget(username=username, password=password)
+            session["username"] = user.username
+            if user.is_admin:
+                # This won't be set for non-admins. The standard is_admin check
+                # in the templates is just "admin" in session. It is removed on
+                # logout.
+                session["admin"] = True
+            return redirect(url_for("index"))
+
+        except User.DoesNotExist:
+            error_message = "Invalid credentials, please try again."
+
+    return await render_template("login.html", error_message=error_message)
+
+
+@app.route("/logout")
+async def logout():
+    session.pop("username", None)
+    session.pop("admin", None)
+    return redirect(url_for("login"))
+
+
 @app.route('/', methods=['GET'])
+@login_required
 async def index():
     return await render_template('index.html')
 
 
 @app.route('/admin', methods=['GET'])
+@admin_required
 async def admin():
     return await render_template('admin.html')
 
 
 @app.route('/search', methods=['POST'])
+@login_required
 async def search():
     results = []
     search_payload = await request.json
@@ -91,6 +158,7 @@ async def broadcast_document_update(document):
 
 
 @app.route('/upload', methods=['POST'])
+@admin_required
 async def upload_file():
     form = await request.files
     file = form.get('file')
@@ -177,6 +245,7 @@ async def upload_file():
 
 
 @app.route('/files', methods=['GET'])
+@admin_required
 async def list_files():
 
     documents = await sync_to_async(list)(Document.objects.all())
@@ -194,13 +263,8 @@ async def list_files():
     return jsonify(files_list), 200
 
 
-@app.route('/files/<filename>', methods=['GET'])
-async def serve_file(filename):
-    # TODO: Use a better identifier than filename.
-    return await send_from_directory(UPLOAD_FOLDER, filename)
-
-
 @app.route('/document/<id>/download', methods=['GET'])
+@login_required
 async def serve_document(id):
     try:
         document = await Document.objects.aget(document=id)
@@ -211,6 +275,7 @@ async def serve_document(id):
 
 
 @app.route('/page/<document_id>/<number>', methods=['GET'])
+@login_required
 async def serve_page_image(document_id, number):
     try:
         page = await Page.objects.aget(document=document_id, number=number)
@@ -221,6 +286,7 @@ async def serve_page_image(document_id, number):
 
 
 @app.route('/document/<id>', methods=['GET'])
+@login_required
 async def document_detail(id):
     try:
         document = await Document.objects.aget(id=id)
@@ -231,6 +297,7 @@ async def document_detail(id):
 
 
 @app.route('/document/<id>/delete', methods=['GET'])
+@admin_required
 async def delete_document(id):
     try:
         document = await Document.objects.aget(id=id)

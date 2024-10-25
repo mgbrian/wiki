@@ -63,6 +63,12 @@ class Proposition(models.Model):
     pass
 
 
+class User(models.Model):
+    username = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    is_admin = models.BooleanField(default=False)
+
+
 @receiver(post_save, sender=Page)
 def parse_page(sender, instance, created, **kwargs):
     """Parse a Page on creation."""

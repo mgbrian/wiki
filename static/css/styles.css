@@ -62,7 +62,7 @@ nav > ul {
 }
 
 nav > ul > li {
-    width: 50px;
+    width: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -149,7 +149,8 @@ footer {
 
 /* Admin Page Styles */
 
-#file-upload-form {
+#file-upload-form,
+#login-form {
     display: flex;
     justify-content: center;
     /* align-items: center; */
@@ -375,4 +376,37 @@ main.document-detail-page {
 
 .page-thumbnail .page-status-indicator {
     display: none;
+}
+
+/* Login Page */
+
+/* login-form base styles are above, paired with file-upload-form.  */
+
+#login-form {
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+}
+
+#login-form h2 {
+    text-align: center;
+}
+
+#login-form input,
+#login-form button {
+    height: 35px;
+    width: 90%;
+    margin: 10px auto;
+    padding: 5px 10px;
+}
+
+#login-form button {
+    width: 100px;
+    font-weight: bold;
+}
+
+.form-error-message {
+    color: #ba7171;
+    font-size: 0.9rem;
+    text-align: center;
 }

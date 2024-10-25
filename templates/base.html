@@ -12,7 +12,14 @@
             <nav>
                 <ul>
                     <li class="logo"><a href="{{ url_for('index') }}">WIKI</a></li>
+                    {% if "admin" in session %}
                     <li><a href="{{ url_for('admin') }}">Admin</a></li>
+                    {% endif %}
+                    {% if "username" in session %}
+                    <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('login') }}">Log In</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </header>
