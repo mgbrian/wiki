@@ -94,6 +94,7 @@ nav .logo a {
 }
 
 input {
+    height: var(--search-box-height);
     font-size: 0.85rem;
 }
 
