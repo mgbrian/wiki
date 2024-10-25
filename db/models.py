@@ -24,7 +24,7 @@ PAGE_STATUS_CODES = (
 class Document(models.Model):
     name = models.CharField(max_length=255)
     filepath = models.FilePathField(path=documents_path)
-    contents_summary = models.TextField()
+    summary = models.TextField()
     status = models.IntegerField(choices=DOCUMENT_STATUS_CODES, default=0)
 
 
@@ -35,7 +35,12 @@ class Page(models.Model):
     previous = models.OneToOneField('Page', on_delete=models.CASCADE,
         related_name='next', blank=True, null=True)
     filepath = models.FilePathField(path=documents_path, recursive=True)
-    contents_summary = models.TextField()
+    text = models.TextField(null=True, blank=True)
+    summary = models.TextField(null=True, blank=True)
+    # Different from summary -- think of this as similar to alt text explaining
+    # what is on the page. summary and text may be blank if the page doesn't contain
+    # anything.
+    description = models.TextField(null=True, blank=True)
     status = models.IntegerField(choices=PAGE_STATUS_CODES, default=0)
 
 
