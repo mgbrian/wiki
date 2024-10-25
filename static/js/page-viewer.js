@@ -6,6 +6,12 @@ for (let pageThumbnailContainer of pageThumbnailContainers) {
   pageThumbnailContainer.addEventListener("click", displayPage);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  if (pageThumbnailContainers.length) {
+    pageThumbnailContainers[0].click();
+  }
+});
+
 /* Display a page. Click handler for page thumbnails. */
 function displayPage(event) {
   let pageThumbnailContainer = event.currentTarget;
