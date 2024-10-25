@@ -405,7 +405,7 @@ class GoogleAPI(BaseAPI):
         generation_config = {
             "temperature": temperature,
             "top_p": 0.95,
-            "top_k": 0,
+            "top_k": 1,
             "max_output_tokens": max_tokens,
             "candidate_count": 1
         }
