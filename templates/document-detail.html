@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %} - Admin{% endblock %}
+
+{% block content %}
+
+<h2>{{ document.name }}</h2>
+<small class="document-status-indicator"> {{ document.get_status_display() }} </small>
+
+<div id="page-display"></div>
+
+<div id="page-thumbnail-carousel">
+    {% for page in document.pages.all() %}
+    <div class="page-thumbnail">
+        <img src="{{ url_for('serve_page_image', id=page.id) }}">
+        <small class="page-number">
+        {{ page.number }}
+        </small>
+        <small class="page-status-indicator">
+        {{ page.get_status_display() }}
+        </small>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/page-viewer.js') }}"></script>
+{% endblock %}

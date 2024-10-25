@@ -1,6 +1,9 @@
 :root {
     --search-box-height: 40px;
     --content-max-width: 600px;
+    --header-height: 50px;
+    --footer-height: 50px;
+    --thumbnail-carousel-height: 100px;
 }
 
 *,
@@ -40,6 +43,7 @@ footer {
 header {
     background: rgba(0, 0, 0, 0.8);
     top: 0;
+    height: var(--header-height);
 }
 
 nav {
@@ -112,7 +116,6 @@ footer {
     display: none;
 }
 
-/* For country names in the results box. */
 #results-box > p {
     padding: 10px 5px;
     margin: 0;
@@ -124,6 +127,7 @@ footer {
 }
 
 /* Admin Page Styles */
+
 #file-upload-form {
     display: flex;
     justify-content: center;
@@ -207,4 +211,83 @@ footer {
 #file-list [data-status="Error"] .file-status-indicator {
     background: #f95454;
     color: white;
+}
+
+/* Document Detail Page Styles */
+
+#page-display {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+
+    max-height: calc(
+        100vh - var(--footer-height) - var(--header-height) -
+            var(--thumbnail-carousel-height) - 50px
+    );
+    aspect-ratio: 1;
+    /* background: #eee; */
+    background: #333;
+    margin-top: 20px;
+    margin-bottom: calc(
+        var(--footer-height) + var(--thumbnail-carousel-height) + 10px
+    );
+}
+
+#page-thumbnail-carousel {
+    position: fixed;
+    bottom: calc(var(--footer-height) + 2px);
+    left: 0;
+
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    height: var(--thumbnail-carousel-height);
+    width: 100%;
+    padding: 10px 30px;
+    background-color: #eee;
+}
+
+.page-thumbnail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: 100%;
+}
+
+.page-thumbnail:hover {
+}
+
+.page-thumbnail > img {
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.page-thumbnail > small {
+    text-align: center;
+}
+
+.page-thumbnail .page-number {
+    display: none;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.page-thumbnail:hover .page-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.page-thumbnail .page-status-indicator {
+    display: none;
 }

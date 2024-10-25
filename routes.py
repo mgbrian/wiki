@@ -3,7 +3,8 @@ import os
 
 import aiofiles
 from asgiref.sync import sync_to_async
-from quart import Quart, render_template, request, jsonify, send_from_directory, websocket
+from quart import (Quart, render_template, request, jsonify, send_from_directory,
+    send_file, websocket, abort)
 
 from db.models import Document, Page
 import env
@@ -73,7 +74,6 @@ async def upload_file():
     filename = file.filename
     filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-    # Save the file to the uploads directory
     async with aiofiles.open(filepath, 'wb') as f:
         await f.write(file.read())
 
@@ -142,6 +142,26 @@ async def list_files():
 async def serve_file(filename):
     # TODO: Use a better identifier than filename.
     return await send_from_directory(UPLOAD_FOLDER, filename)
+
+
+@app.route('/page/<id>', methods=['GET'])
+async def serve_page_image(id):
+    try:
+        page = await Page.objects.aget(id=id)
+        return await send_file(page.filepath)
+
+    except Page.DoesNotExist:
+        abort(404)
+
+
+@app.route('/document/<id>', methods=['GET'])
+async def document_detail(id):
+    try:
+        document = await Document.objects.aget(id=id)
+        return await render_template('document-detail.html', document=document)
+
+    except Document.DoesNotExist:
+        abort(404)
 
 
 @app.websocket('/ws/status/')
