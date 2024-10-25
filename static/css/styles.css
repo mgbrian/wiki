@@ -12,6 +12,10 @@
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none !important;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -112,18 +116,35 @@ footer {
     padding: 0;
 }
 
-.hidden {
-    display: none;
+#results-box > a {
+    color: black;
 }
 
-#results-box > p {
-    padding: 10px 5px;
+#results-box .search-result {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    padding: 8px 10px;
     margin: 0;
+    font-size: 0.9rem;
 }
 
-#results-box > p:hover,
-#results-box > p:focus {
+#results-box .search-result:hover,
+#results-box .search-result:focus {
     background-color: #eee;
+}
+
+#results-box .search-result {
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
+}
+
+#results-box .search-result-header {
+    font-weight: bold;
+}
+
+#results-box .search-result-text {
+    text-align: justify;
 }
 
 /* Admin Page Styles */

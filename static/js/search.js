@@ -2,6 +2,7 @@ const searchInputBox = document.getElementById("search");
 const resultsBox = document.getElementById("results-box");
 
 const SEARCH_ENDPOINT = "/search";
+const DOCUMENT_ENDPOINT_PREFIX = "/document";
 
 searchInputBox.addEventListener("input", updateSearchResults);
 
@@ -22,7 +23,14 @@ async function updateSearchResults() {
   }
 
   for (let result of searchResults) {
-    resultsBox.innerHTML += `<p class="search-result">${result.text}</p>`;
+    resultsBox.innerHTML += `
+      <a href="${DOCUMENT_ENDPOINT_PREFIX}/${result.document.id}#${result.number}">
+          <p class="search-result">
+              <small class="search-result-header">${result.document.name} - ${result.number}</small>
+              <span class="search-result-text">${result.text}</span>
+          </p>
+      </a>
+    `;
   }
 }
 
