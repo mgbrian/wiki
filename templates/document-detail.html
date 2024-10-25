@@ -9,18 +9,20 @@
 
 <div id="page-display"></div>
 
-<div id="page-thumbnail-carousel">
-    {% for page in document.pages.all() %}
-    <div class="page-thumbnail" data-page-id="{{ page.id }}">
-        <img src="{{ url_for('serve_page_image', id=page.id) }}">
-        <small class="page-number">
-        {{ page.number }}
-        </small>
-        <small class="page-status-indicator">
-        {{ page.get_status_display() }}
-        </small>
+<div id="page-thumbnail-carousel-container">
+    <div id="page-thumbnail-carousel">
+        {% for page in document.pages.all() %}
+        <div class="page-thumbnail" data-page-id="{{ page.id }}">
+            <img src="{{ url_for('serve_page_image', id=page.id) }}">
+            <small class="page-number">
+            {{ page.number }}
+            </small>
+            <small class="page-status-indicator">
+            {{ page.get_status_display() }}
+            </small>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 {% endblock %}

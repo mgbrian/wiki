@@ -243,19 +243,25 @@ footer {
     height: calc(100% - 10px);
 }
 
-#page-thumbnail-carousel {
+#page-thumbnail-carousel-container {
     position: fixed;
     bottom: calc(var(--footer-height) + 2px);
     left: 0;
+    width: 100%;
+    height: var(--thumbnail-carousel-height);
+    background-color: #eee;
+}
 
+#page-thumbnail-carousel {
+    margin: auto;
     display: flex;
     flex-direction: row;
     gap: 15px;
-    height: var(--thumbnail-carousel-height);
+    height: 100%;
     width: 100%;
+    max-width: 1000px;
     overflow-x: scroll;
     padding: 10px 30px;
-    background-color: #eee;
 }
 
 .page-thumbnail {
