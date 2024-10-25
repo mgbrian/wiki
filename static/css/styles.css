@@ -93,6 +93,17 @@ nav .logo a {
     text-transform: uppercase;
 }
 
+input {
+    font-size: 0.85rem;
+}
+
+button {
+    height: 35px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
 footer {
     position: fixed;
     bottom: 0;
@@ -174,10 +185,7 @@ footer {
 
 #file-upload-form button {
     width: 120px;
-    height: 27px;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    font-weight: bold;
+    margin-top: 15px;
 }
 
 #files-list-container {
@@ -397,15 +405,16 @@ main.document-detail-page {
 
 #login-form input,
 #login-form button {
-    height: 35px;
-    width: 90%;
     margin: 10px auto;
     padding: 5px 10px;
 }
 
+#login-form input {
+    width: 90%;
+}
+
 #login-form button {
     width: 100px;
-    font-weight: bold;
 }
 
 .form-error-message {
