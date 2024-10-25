@@ -47,7 +47,8 @@ async function search(searchText) {
     });
 
     if (!response.ok) {
-      console.error(`HTTP Error! Response: ${response}`);
+      console.error("HTTP Error! Response:");
+      console.error(response);
       throw new Error(`Something went wrong.`);
     }
 

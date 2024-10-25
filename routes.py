@@ -1,8 +1,10 @@
 import asyncio
+import json
 import os
 
 import aiofiles
 from asgiref.sync import sync_to_async
+from django.contrib.postgres.search import TrigramSimilarity
 from quart import (Quart, render_template, request, jsonify, send_from_directory,
     send_file, websocket, abort)
 
@@ -40,12 +42,31 @@ async def admin():
 
 @app.route('/search', methods=['POST'])
 async def search():
-    dummy_data = [
-        {'text': 'cat'},
-        {'text': 'dog'},
-        {'text': 'monkey'}
-    ]
-    return jsonify(dummy_data)
+    results = []
+    search_payload = await request.json
+
+    try:
+        search_term = search_payload['text']
+
+        if search_term:
+            # Simple search:
+            queryset = Page.objects.filter(text__icontains=search_term)
+
+            async for page in queryset:
+                results.append(
+                    {
+                        'id': page.number,
+                        'number': page.number,
+                        'text': page.text,
+                        'summary': page.summary,
+                    }
+                )
+
+    except (json.JSONDecodeError, KeyError) as e:
+        print(e)
+        return jsonify({'error': 'Malformed search payload.'}), 400
+
+    return jsonify(results)
 
 
 async def broadcast_document_update(document):
