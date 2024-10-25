@@ -28,6 +28,15 @@ function navigateToPage() {
 
     if (validPageNumbers.has(pageNumber)) {
       displayPage(pageNumber);
+
+      // Highlight the correct page number thumbnail.
+      document.querySelectorAll(`.page-thumbnail.active-page`).forEach((el) => {
+        el.classList.remove("active-page");
+      });
+      let currentActivePageThumbnail = document.querySelector(
+        `[data-page-number="${pageNumber}"]`,
+      );
+      currentActivePageThumbnail.classList.add("active-page");
     }
   }
 }

@@ -293,12 +293,16 @@ footer {
     height: 100%;
     /* aspect-ratio: 1; */
     overflow: hidden;
-    border: 1px solid black;
+    outline: 1px solid black;
     border-radius: 5px;
     background: #fff;
 }
 
 .page-thumbnail:hover {
+}
+
+.page-thumbnail.active-page {
+    outline: 2px solid black;
 }
 
 .page-thumbnail > img {
