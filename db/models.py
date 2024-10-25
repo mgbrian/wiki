@@ -2,6 +2,11 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from image import Image
+from parser import parse_page_image
 
 
 def documents_path():
@@ -42,6 +47,7 @@ class Page(models.Model):
     # anything.
     description = models.TextField(null=True, blank=True)
     status = models.IntegerField(choices=PAGE_STATUS_CODES, default=0)
+    error_details = models.TextField(null=True, blank=True)
 
 
 class Proposition(models.Model):
@@ -49,3 +55,28 @@ class Proposition(models.Model):
     # https://github.com/langchain-ai/langchain/blob/master/templates/propositional-retrieval/propositional_retrieval/proposal_chain.py
     # summary, start_page, end_page
     pass
+
+
+@receiver(post_save, sender=Page)
+def parse_page(sender, instance, created, **kwargs):
+    """Parse a Page on creation."""
+    if created:
+        try:
+            page_image = Image(instance.filepath)
+            parse_result = parse_page_image(page_image)
+
+            instance.text = parse_result['text']
+            instance.summary = parse_result['summary']
+            instance.description = parse_result['description']
+            instance.status = 1
+            instance.save()
+
+        # TODO: Catch more specific Exceptions here.
+        except Exception as e:
+            instance.status = 2
+            instance.error_details = f'{type(e)}: {e}'
+            instance.save()
+            # Update document status to "error""
+            # TODO: Figure out more DRY way to do this.
+            instance.document.status = 2
+            instance.document.save()
