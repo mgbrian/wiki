@@ -3,6 +3,7 @@ const fileInput = document.getElementById("file-input");
 const fileList = document.getElementById("file-list");
 const FILE_UPLOAD_ENDPOINT = "/upload";
 const FILE_LIST_ENDPOINT = "/files";
+const DOCUMENT_ENDPOINT_PREFIX = "/document";
 
 document.addEventListener("DOMContentLoaded", fetchFileList);
 uploadForm.addEventListener("submit", uploadFile);
@@ -63,7 +64,11 @@ function renderFileDisplay(file) {
   li.dataset.id = file.id || null;
 
   const fileLink = document.createElement("a");
-  fileLink.href = `/files/${file.filename}`;
+  if (file.id) {
+    fileLink.href = `${DOCUMENT_ENDPOINT_PREFIX}/${file.id}`;
+  } else {
+    fileLink.href = "#";
+  }
   fileLink.textContent = file.filename;
   fileLink.setAttribute("target", "_blank");
 
