@@ -200,6 +200,16 @@ async def serve_file(filename):
     return await send_from_directory(UPLOAD_FOLDER, filename)
 
 
+@app.route('/document/<id>/download', methods=['GET'])
+async def serve_document(id):
+    try:
+        document = await Document.objects.aget(document=id)
+        return await send_file(document.filepath)
+
+    except Document.DoesNotExist:
+        abort(404)
+
+
 @app.route('/page/<document_id>/<number>', methods=['GET'])
 async def serve_page_image(document_id, number):
     try:
@@ -218,6 +228,24 @@ async def document_detail(id):
 
     except Document.DoesNotExist:
         abort(404)
+
+
+@app.route('/document/<id>/delete', methods=['GET'])
+async def delete_document(id):
+    try:
+        document = await Document.objects.aget(id=id)
+        await document.adelete()
+
+        # TODO: Delete files -- add this as a pre/post_delete signal.
+
+    except Document.DoesNotExist:
+        pass
+
+    # any other errors
+    except Exception:
+        return jsonify({'error': f'Document {id} deleted.'}), 500
+
+    return jsonify({'message': f'Document {id} deleted.'})
 
 
 @app.websocket('/ws/status/')
