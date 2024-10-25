@@ -5,16 +5,14 @@ Extract only the text relevant for the topics covered on the page, ignoring othe
 If the text appears to end in the middle of a sentence/paragraph, return what you see and request to see the next page.
 
 **Response Format**
-Respond with valid JSON in the following format:
+Respond with valid JSON in the following format. Only return a response that can directly be parse by Python's json.loads:
 
-```json
 {
-  "text": ...,
-  "summary": ...,
-  "description": ...,
-  "requestNextPage": ...,
+    "text": ...,
+    "summary": ...,
+    "description": ...,
+    "requestNextPage": ...,
 }
-```
 
 **Field Descriptions**
 text: String or null. The text on the page, or null if there is no topic-relevant text.
