@@ -233,6 +233,14 @@ footer {
     margin-bottom: calc(
         var(--footer-height) + var(--thumbnail-carousel-height) + 10px
     );
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#page-display img {
+    height: calc(100% - 10px);
 }
 
 #page-thumbnail-carousel {

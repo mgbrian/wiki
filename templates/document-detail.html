@@ -11,7 +11,7 @@
 
 <div id="page-thumbnail-carousel">
     {% for page in document.pages.all() %}
-    <div class="page-thumbnail">
+    <div class="page-thumbnail" data-page-id="{{ page.id }}">
         <img src="{{ url_for('serve_page_image', id=page.id) }}">
         <small class="page-number">
         {{ page.number }}
