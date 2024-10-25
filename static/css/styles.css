@@ -294,7 +294,7 @@ footer {
     /* aspect-ratio: 1; */
     overflow: hidden;
     outline: 1px solid black;
-    border-radius: 5px;
+    border-radius: 0px;
     background: #fff;
 }
 
