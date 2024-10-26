@@ -4,6 +4,8 @@
 
 {% block content %}
 <main>
+    <input type="text" placeholder="Type to search..." id="search" autocomplete="off"/>
+
     <div id="search-mode-selector-container">
         <span id="search-mode-container-header">Search Mode</span>
         <div class="radio-group">
@@ -25,7 +27,6 @@
         </div>
     </div>
 
-    <input type="text" placeholder="Type to search..." id="search" autocomplete="off"/>
     <!-- Container for search results. Hidden when empty. -->
     <div id="results-box" class="hidden"></div>
 </main>
