@@ -136,6 +136,7 @@ async def search():
                 queryset = Page.objects.alias(
                     distance=CosineDistance('text_embeddings', search_term_embedding)
                 ).filter(distance__lt=(1.0 - threshold)
+                ).order_by('distance'
                 ).select_related('document')
 
             async for page in queryset:
