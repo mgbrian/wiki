@@ -403,7 +403,7 @@ main.document-detail-page {
     width: var(--width);
     max-width: 400px;
     height: 100%;
-    padding-top: 10px;
+    padding: 40px 20px 20px 20px;
     border: 1px solid black;
     background: #fff;
     transition: transform 250ms ease-in-out;
@@ -414,9 +414,9 @@ main.document-detail-page {
 }
 
 #page-metadata-container-toggle {
-    --width: 30px;
+    --width: 35px;
     position: absolute;
-    top: 5px;
+    top: 10px;
     left: calc(-1 * var(--width));
     width: var(--width);
     aspect-ratio: 1;
@@ -436,6 +436,7 @@ main.document-detail-page {
     width: 90%;
     max-width: 500px;
     margin: 0 auto;
+    overflow-y: scroll;
 }
 
 #page-metadata .page-summary-heading,
@@ -449,7 +450,9 @@ main.document-detail-page {
 
 #page-metadata .page-summary,
 #page-metadata .page-text {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.25rem;
+    text-align: justify;
 }
 
 #page-metadata .page-text-heading {
