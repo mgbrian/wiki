@@ -126,10 +126,16 @@ async def search():
 
             # 2. Semantic Search
             else:
+                threshold = search_payload.get('threshold')
+                if (type(threshold) != float and type(threshold) != int) or threshold <= 0 or threshold >= 1:
+                    # TODO: Parametrize this here and in JS!
+                    threshold = 0.5
+
+                print(threshold)
                 search_term_embedding = await asyncio.to_thread(calculate_embeddings, search_term)
                 queryset = Page.objects.alias(
                     distance=CosineDistance('text_embeddings', search_term_embedding)
-                ).filter(distance__lt=0.5
+                ).filter(distance__lt=(1.0 - threshold)
                 ).select_related('document')
 
             async for page in queryset:

@@ -81,12 +81,18 @@ async function search(searchText) {
   }
 
   try {
+    let mode = getSelectedSearchMode();
+    let payload = { text: searchText, mode: mode };
+    if (mode === "semantic") {
+      payload["threshold"] = parseFloat(semanticSearchSlider.value);
+    }
+
     const response = await fetch(SEARCH_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text: searchText, mode: getSelectedSearchMode() }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
