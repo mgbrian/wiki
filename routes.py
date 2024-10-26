@@ -5,12 +5,12 @@ import os
 
 import aiofiles
 from asgiref.sync import sync_to_async
-from django.contrib.postgres.search import TrigramSimilarity
 import magic
+from pgvector.django import L2Distance, CosineDistance
 from quart import (Quart, render_template, redirect, request, jsonify, session,
     url_for, send_from_directory, send_file, websocket, abort)
 
-from db.models import Document, Page, User
+from db.models import Document, Page, User, calculate_embeddings
 import env
 import utils
 
@@ -110,6 +110,9 @@ async def admin():
 @app.route('/search', methods=['POST'])
 @login_required
 async def search():
+    # TODO: Placeholder. This should either be determined through context or
+    # from an explicit flag from the frontend.
+    search_type = 'simple'  # or 'semantic'
     results = []
     search_payload = await request.json
 
@@ -117,8 +120,17 @@ async def search():
         search_term = search_payload['text']
 
         if search_term:
-            # Simple search:
-            queryset = Page.objects.filter(text__icontains=search_term).select_related('document')
+            # 1. Simple search:
+            if search_type == 'simple':
+                queryset = Page.objects.filter(text__icontains=search_term).select_related('document')
+
+            # 2. Semantic Search
+            else:
+                search_term_embedding = await asyncio.to_thread(calculate_embeddings, search_term)
+                queryset = Page.objects.alias(
+                    distance=CosineDistance('text_embeddings', search_term_embedding)
+                ).filter(distance__lt=0.5
+                ).select_related('document')
 
             async for page in queryset:
                 results.append(
