@@ -114,6 +114,71 @@ footer {
 
 /* Search Page */
 
+#search-mode-selector-container {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: ; */
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    /* padding: 0 15px; */
+    font-size: 0.8rem;
+    border-radius: 10px;
+}
+#search-mode-selector-container * {
+    /* outline: 1px solid red; */
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#search-mode-container-header {
+    padding: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    background: #eee;
+}
+
+#search-mode-selector-container input {
+    /* Unset the height set on inputs. TODO: Narrow down that rule to text/password only. */
+    height: auto !important;
+}
+
+#search-mode-selector-container .radio-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#keyword-search-radio-button,
+#semantic-search-radio-button {
+    margin: 0 8px;
+}
+
+#semantic-search-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+#semantic-similarity-threshold-slider-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+#semantic-similarity-threshold-slider {
+}
+
+#semantic-similarity-threshold-value {
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
 #search {
     width: 100%;
     height: var(--search-box-height);
@@ -122,8 +187,11 @@ footer {
 
 #results-box {
     position: absolute;
-    /* Offset by height of search box so it's directly under it. */
-    top: var(--search-box-height);
+    /* Offset by height of search box + search mode selectors so it's directly
+       under the search box. TODO: Make this less hacky.
+    */
+    /* top: var(--search-box-height); */
+    top: calc(33px + var(--search-box-height));
     width: 100%;
     border: 1px solid grey;
     padding: 0;
@@ -357,6 +425,8 @@ main.document-detail-page {
     justify-content: center;
     align-items: center;
     background: inherit;
+    border: 1px solid #999;
+    border-right-width: 0;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     cursor: pointer;

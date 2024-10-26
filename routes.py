@@ -110,18 +110,18 @@ async def admin():
 @app.route('/search', methods=['POST'])
 @login_required
 async def search():
-    # TODO: Placeholder. This should either be determined through context or
-    # from an explicit flag from the frontend.
-    search_type = 'simple'  # or 'semantic'
+    search_type = 'keyword'  # or 'semantic'
     results = []
     search_payload = await request.json
 
     try:
-        search_term = search_payload['text']
+        search_term = search_payload.get('text')
+        search_mode = search_payload.get('mode', 'keyword')
+        if search_mode not in {'keyword', 'semantic'}: search_mode = 'keyword'
 
         if search_term:
             # 1. Simple search:
-            if search_type == 'simple':
+            if search_mode == 'keyword':
                 queryset = Page.objects.filter(text__icontains=search_term).select_related('document')
 
             # 2. Semantic Search

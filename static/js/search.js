@@ -1,10 +1,45 @@
+const keywordSearchRadioButton = document.getElementById(
+  "keyword-search-radio-button",
+);
+const semanticSearchRadioButton = document.getElementById(
+  "semantic-search-radio-button",
+);
+
+const semanticSearchSliderContainer = document.getElementById(
+  "semantic-similarity-threshold-slider-container",
+);
+const semanticSearchSlider = document.getElementById(
+  "semantic-similarity-threshold-slider",
+);
+const semanticSearchSliderValueDisplay = document.getElementById(
+  "semantic-similarity-threshold-value",
+);
 const searchInputBox = document.getElementById("search");
 const resultsBox = document.getElementById("results-box");
 
 const SEARCH_ENDPOINT = "/search";
 const DOCUMENT_ENDPOINT_PREFIX = "/document";
 
+document.addEventListener(
+  "DOMContentLoaded",
+  toggleSemanticSearchSliderVisibility,
+);
+
+keywordSearchRadioButton.addEventListener(
+  "change",
+  toggleSemanticSearchSliderVisibility,
+);
+semanticSearchRadioButton.addEventListener(
+  "change",
+  toggleSemanticSearchSliderVisibility,
+);
+
 searchInputBox.addEventListener("input", updateSearchResults);
+
+semanticSearchSlider.addEventListener("change", (event) => {
+  sliderValue = event.target.value;
+  semanticSearchSliderValueDisplay.textContent = sliderValue;
+});
 
 /* Send the current contents of the search box to the backend and update the
    results box with the results.
@@ -51,7 +86,7 @@ async function search(searchText) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ text: searchText }),
+      body: JSON.stringify({ text: searchText, mode: getSelectedSearchMode() }),
     });
 
     if (!response.ok) {
@@ -70,4 +105,17 @@ async function search(searchText) {
     console.error(`Error searching for ${searchText}`);
     console.error("Error:", error);
   }
+}
+
+function toggleSemanticSearchSliderVisibility() {
+  if (keywordSearchRadioButton.checked) {
+    semanticSearchSliderContainer.classList.add("hidden");
+  } else {
+    semanticSearchSliderContainer.classList.remove("hidden");
+  }
+}
+
+function getSelectedSearchMode() {
+  const selectedMode = document.querySelector('input[name="mode"]:checked');
+  return selectedMode ? selectedMode.value : null;
 }

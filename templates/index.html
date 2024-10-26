@@ -4,6 +4,27 @@
 
 {% block content %}
 <main>
+    <div id="search-mode-selector-container">
+        <span id="search-mode-container-header">Search Mode</span>
+        <div class="radio-group">
+            <label for="keyword-search-radio-button">Keyword</label>
+            <input type="radio" name="mode" value="keyword" id="keyword-search-radio-button" checked>
+        </div>
+
+        <!-- TODO: Better name for this! -->
+        <div id="semantic-search-group">
+            <div class="radio-group">
+                <label for="semantic-search-radio-button">Semantic</label>
+                <input type="radio" name="mode" value="semantic" id="semantic-search-radio-button">
+            </div>
+
+            <div id="semantic-similarity-threshold-slider-container">
+                <input type="range" id="semantic-similarity-threshold-slider" min="0" max="1" step="0.1">
+                <span id="semantic-similarity-threshold-value">0.5</span>
+            </div>
+        </div>
+    </div>
+
     <input type="text" placeholder="Type to search..." id="search" autocomplete="off"/>
     <!-- Container for search results. Hidden when empty. -->
     <div id="results-box" class="hidden"></div>
