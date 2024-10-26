@@ -267,7 +267,7 @@ async def list_files():
 @login_required
 async def serve_document(id):
     try:
-        document = await Document.objects.aget(document=id)
+        document = await Document.objects.aget(id=id)
         return await send_file(document.filepath)
 
     except Document.DoesNotExist:

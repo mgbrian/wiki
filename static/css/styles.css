@@ -127,6 +127,12 @@ footer {
     width: 100%;
     border: 1px solid grey;
     padding: 0;
+
+    overflow-y: scroll;
+    margin-bottom: calc(2 * var(--footer-height));
+    height: fit-content;
+    /* The 75vh is 100vh - main's margin-top of 25vh. TODO: Parametrize! */
+    max-height: calc(75vh - var(--header-height) - var(--footer-height) - 40px);
 }
 
 #results-box > a {
@@ -221,7 +227,8 @@ footer {
     color: #4d74b8;
 }
 
-#file-list .delete-button {
+#file-list .delete-button,
+#file-list .download-button {
     margin-left: 10px;
     cursor: pointer;
     display: flex;
@@ -232,6 +239,11 @@ footer {
 #file-list .delete-button:hover,
 #file-list .delete-button:focus {
     color: #ba7171;
+}
+
+#file-list .download-button:hover,
+#file-list .download-button:focus {
+    color: #4d74b8;
 }
 
 #file-list .file-status-indicator {

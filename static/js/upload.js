@@ -94,8 +94,19 @@ function renderFileDisplay(file) {
   deleteButtonIcon.textContent = "delete";
   deleteButton.appendChild(deleteButtonIcon);
 
+  const downloadButton = document.createElement("a");
+  downloadButton.classList.add("download-button");
+  const downloadEndpoint = `/document/${file.id}/download`;
+  downloadButton.href = downloadEndpoint;
+  downloadButton.target = "_blank";
+  const downloadButtonIcon = document.createElement("span");
+  downloadButtonIcon.classList.add("material-symbols-outlined");
+  downloadButtonIcon.textContent = "download";
+  downloadButton.appendChild(downloadButtonIcon);
+
   li.appendChild(fileLink);
   li.appendChild(statusIndicator);
+  li.appendChild(downloadButton);
   li.appendChild(deleteButton);
 
   fileList.appendChild(li);
