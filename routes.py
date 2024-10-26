@@ -274,6 +274,17 @@ async def serve_document(id):
         abort(404)
 
 
+@app.route('/document/<id>', methods=['GET'])
+@login_required
+async def document_detail(id):
+    try:
+        document = await Document.objects.aget(id=id)
+        return await render_template('document-detail.html', document=document)
+
+    except Document.DoesNotExist:
+        abort(404)
+
+
 @app.route('/page/<document_id>/<number>', methods=['GET'])
 @login_required
 async def serve_page_image(document_id, number):
@@ -285,15 +296,27 @@ async def serve_page_image(document_id, number):
         abort(404)
 
 
-@app.route('/document/<id>', methods=['GET'])
+@app.route('/page/<document_id>/<number>/info', methods=['GET'])
 @login_required
-async def document_detail(id):
-    try:
-        document = await Document.objects.aget(id=id)
-        return await render_template('document-detail.html', document=document)
+async def get_page_metadata(document_id, number):
 
-    except Document.DoesNotExist:
-        abort(404)
+    try:
+        page = await Page.objects.aget(document=document_id, number=number)
+
+        page_info = {
+            "id": page.id,
+            "text": page.text,
+            "summary": page.summary,
+        }
+
+        if "admin" in session:
+            page_info['status'] = page.get_status_display()
+            page_info['description'] = page.description
+
+        return jsonify(page_info), 200
+
+    except Page.DoesNotExist:
+        return jsonify({'error': 'Page not found.'}), 404
 
 
 @app.route('/document/<id>/delete', methods=['GET'])
