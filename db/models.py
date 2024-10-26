@@ -7,6 +7,8 @@ from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import ollama
+from pgvector.django import VectorField, HnswIndex
 
 from image import Image
 from parser import parse_page_image
@@ -47,16 +49,50 @@ class Page(models.Model):
         related_name='next', blank=True, null=True)
     filepath = models.FilePathField(path=documents_path, recursive=True)
     text = models.TextField(null=True, blank=True)
+    text_embeddings = VectorField(dimensions=768, blank=True, null=True)
     summary = models.TextField(null=True, blank=True)
+    summary_embeddings = VectorField(dimensions=768, blank=True, null=True)
     # Different from summary -- think of this as similar to alt text explaining
     # what is on the page. summary and text may be blank if the page doesn't contain
     # anything.
     description = models.TextField(null=True, blank=True)
+    description_embeddings = VectorField(dimensions=768, blank=True, null=True)
     status = models.IntegerField(choices=PAGE_STATUS_CODES, default=0)
     error_details = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ['document', 'number']
+        indexes = [
+            HnswIndex(
+                name="text_embeddings_index",
+                fields=["text_embeddings"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_l2_ops"],
+            ),
+            HnswIndex(
+                name="description_embeddings_index",
+                fields=["description_embeddings"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_l2_ops"],
+            ),
+            HnswIndex(
+                name="summary_embeddings_index",
+                fields=["summary_embeddings"],
+                m=16,
+                ef_construction=64,
+                opclasses=["vector_l2_ops"],
+            )
+        ]
+
+    def save(self, *args, **kwargs):
+        # Presumably we're not going to be saving often, so OK to just
+        # calculate these without checking whether the underlying text has
+        # changed.
+        self.text_embeddings = calculate_embeddings(self.text)
+        self.summary_embeddings = calculate_embeddings(self.summary)
+        self.description_embeddings = calculate_embeddings(self.description)
 
 
 class Proposition(models.Model):
@@ -98,3 +134,24 @@ def parse_page(sender, instance, created, **kwargs):
                 instance.document.save()
 
         page_parser_executor.submit(_parse_image)
+
+
+def calculate_embeddings(text):
+    """Calculate 768-dimension embeddings for the given text.
+
+    Args:
+        text: str - The text to embed.
+
+    Returns:
+        TODO: Confirm Nomic returns this.
+        For symmetry: https://github.com/pgvector/pgvector-python/blob/master/pgvector/django/vector.py
+        np.array of np.float32
+        list of float - 768-dimensions embeddings for the given text.
+    """
+    # This calls this:
+    # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
+    # TODO: Pull embeddings model in install script.
+    api_response = ollama.embed(model="nomic-embed-text", input=text)
+    embeddings_list = api_response.get('embeddings')
+
+    return embeddings_list[0] if embeddings_list else None
