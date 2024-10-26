@@ -326,6 +326,68 @@ main.document-detail-page {
     height: calc(100% - 10px);
 }
 
+#page-metadata-container {
+    --width: 400px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* width: 100%; */
+    width: var(--width);
+    max-width: 400px;
+    height: 100%;
+    padding-top: 10px;
+    border: 1px solid black;
+    background: #fff;
+    transition: transform 250ms ease-in-out;
+}
+
+#page-metadata-container.tucked-away {
+    transform: translateX(var(--width));
+}
+
+#page-metadata-container-toggle {
+    --width: 30px;
+    position: absolute;
+    top: 5px;
+    left: calc(-1 * var(--width));
+    width: var(--width);
+    aspect-ratio: 1;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: inherit;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    cursor: pointer;
+}
+
+#page-metadata {
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#page-metadata .page-summary-heading,
+#page-metadata .page-text-heading {
+    font-size: 0.8rem;
+    /* text-align: center; */
+    margin-top: 20px;
+    color: #333;
+    text-transform: uppercase;
+}
+
+#page-metadata .page-summary,
+#page-metadata .page-text {
+    font-size: 0.8rem;
+}
+
+#page-metadata .page-text-heading {
+}
+
+#page-metadata .page-text {
+}
+
 #page-thumbnail-carousel-container {
     position: fixed;
     bottom: calc(var(--footer-height) + 2px);

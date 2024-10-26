@@ -2,6 +2,10 @@
 
 {% block title %} - {{ document.name }} {% endblock %}
 
+{% block page_css %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+{% endblock %}
+
 {% block content %}
 <main class="document-detail-page">
     <div id="document-info">
@@ -9,8 +13,19 @@
         <small class="document-status-indicator"> {{ document.get_status_display() }} </small>
     </div>
 
-
-    <div id="page-display"></div>
+    <div id="page-display">
+        <div id="page-metadata-container" class="tucked-away">
+            <div id="page-metadata-container-toggle">
+                <span class="material-symbols-outlined">info</span>
+            </div>
+            <div id="page-metadata">
+                <h3 class="page-summary-heading">Summary</h3>
+                <p class="page-summary">None</p>
+                <h3 class="page-text-heading">Text</h3>
+                <p class="page-text">None</p>
+            </div>
+        </div>
+    </div>
 
     <div id="page-thumbnail-carousel-container">
         <div id="page-thumbnail-carousel">
