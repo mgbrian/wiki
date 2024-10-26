@@ -25,21 +25,22 @@ document.addEventListener(
   toggleSemanticSearchSliderVisibility,
 );
 
-keywordSearchRadioButton.addEventListener(
-  "change",
-  toggleSemanticSearchSliderVisibility,
-);
-semanticSearchRadioButton.addEventListener(
-  "change",
-  toggleSemanticSearchSliderVisibility,
-);
-
-searchInputBox.addEventListener("input", updateSearchResults);
+keywordSearchRadioButton.addEventListener("change", () => {
+  toggleSemanticSearchSliderVisibility();
+  updateSearchResults();
+});
+semanticSearchRadioButton.addEventListener("change", () => {
+  toggleSemanticSearchSliderVisibility();
+  updateSearchResults();
+});
 
 semanticSearchSlider.addEventListener("change", (event) => {
   sliderValue = event.target.value;
   semanticSearchSliderValueDisplay.textContent = sliderValue;
+  updateSearchResults();
 });
+
+searchInputBox.addEventListener("input", updateSearchResults);
 
 /* Send the current contents of the search box to the backend and update the
    results box with the results.
