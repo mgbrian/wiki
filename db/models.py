@@ -28,6 +28,13 @@ DOCUMENT_STATUS_CODES = (
     (2, "Error"),
 )
 
+DOCUMENT_TYPES = (
+    (0, "unknown"),
+    (1, "pdf"),
+    (2, "image"),
+    (3, "text"),
+)
+
 PAGE_STATUS_CODES = (
     (0, "Processing"),
     (1, "Ready"),
@@ -40,6 +47,7 @@ class Document(models.Model):
     filepath = models.FilePathField(path=documents_path)
     summary = models.TextField()
     status = models.IntegerField(choices=DOCUMENT_STATUS_CODES, default=0)
+    type = models.IntegerField(choices=DOCUMENT_TYPES, default=0)
 
 
 class Page(models.Model):

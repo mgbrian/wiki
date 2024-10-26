@@ -173,11 +173,14 @@ async def upload_file():
 
     if file_type == 'application/pdf':
         split_document = True
+        # TODO: Parametrize!
+        document_type = 1
 
     elif file_type.startswith('image/'):
         # TODO: Perhaps standardize image params e.g. resolution, size limits, etc.
         # Do this for both PDF pages and standalone images.
         split_document = False
+        document_type = 2
 
     else:
         return jsonify({"error": "File must be a pdf or image."}), 400
@@ -193,7 +196,11 @@ async def upload_file():
         'path': filepath
     }
 
-    document = await Document.objects.acreate(name=filename, filepath=filepath)
+    document = await Document.objects.acreate(
+        name=filename,
+        filepath=filepath,
+        type=document_type
+    )
     file_metadata['id'] = document.id
 
     # Split PDF into separate image files.
