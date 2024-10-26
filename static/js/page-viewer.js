@@ -131,12 +131,12 @@ async function showPageInfo(pageNumber) {
   if (pageInfo["summary"]) {
     pageSummaryElement.textContent = pageInfo["summary"];
   } else {
-    pageSummaryElement.textContent = "None";
+    pageSummaryElement.textContent = "--";
   }
 
   if (pageInfo["text"]) {
     pageTextElement.textContent = pageInfo["text"];
   } else {
-    pageTextElement.textContent = "None";
+    pageTextElement.textContent = "--";
   }
 }
