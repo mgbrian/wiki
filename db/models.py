@@ -13,7 +13,8 @@ from pgvector.django import VectorField, HnswIndex
 from image import Image
 from parser import parse_page_image
 
-
+# TODO: Might want to consider using asyncio.to_thread for page parsing
+# to improve readability.
 page_parser_executor = ThreadPoolExecutor(max_workers=5)
 
 
@@ -94,6 +95,15 @@ class Page(models.Model):
         self.summary_embeddings = calculate_embeddings(self.summary)
         self.description_embeddings = calculate_embeddings(self.description)
 
+        super().save(*args, **kwargs)
+
+    async def asave(self, *args, **kwargs):
+        self.text_embeddings = await asyncio.to_thread(calculate_embeddings, self.text)
+        self.summary_embeddings = await asyncio.to_thread(calculate_embeddings, self.summary)
+        self.description_embeddings = await asyncio.to_thread(calculate_embeddings, self.description)
+
+        await super().asave(*args, **kwargs)
+
 
 class Proposition(models.Model):
     # https://arxiv.org/pdf/2312.06648
@@ -146,12 +156,17 @@ def calculate_embeddings(text):
         TODO: Confirm Nomic returns this.
         For symmetry: https://github.com/pgvector/pgvector-python/blob/master/pgvector/django/vector.py
         np.array of np.float32
-        list of float - 768-dimensions embeddings for the given text.
+        list of float - 768-dimensions embeddings for the given text, or None if
+            text is None/the empty string.
     """
+    if not text:
+        return None
     # This calls this:
     # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
     # TODO: Pull embeddings model in install script.
     api_response = ollama.embed(model="nomic-embed-text", input=text)
     embeddings_list = api_response.get('embeddings')
 
+    # TODO: Find out if there are any non-error situation where embeddings are
+    # not returned. If not, raise an error here instead of returning None.
     return embeddings_list[0] if embeddings_list else None
