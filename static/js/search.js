@@ -36,7 +36,7 @@ semanticSearchRadioButton.addEventListener("change", () => {
 
 semanticSearchSlider.addEventListener("change", (event) => {
   sliderValue = event.target.value;
-  semanticSearchSliderValueDisplay.textContent = sliderValue;
+  semanticSearchSliderValueDisplay.textContent = `>${sliderValue * 100}% similarity`;
   updateSearchResults();
 });
 
