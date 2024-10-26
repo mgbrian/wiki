@@ -55,6 +55,9 @@ class Page(models.Model):
     status = models.IntegerField(choices=PAGE_STATUS_CODES, default=0)
     error_details = models.TextField(null=True, blank=True)
 
+    class Meta:
+        ordering = ['document', 'number']
+
 
 class Proposition(models.Model):
     # https://arxiv.org/pdf/2312.06648
