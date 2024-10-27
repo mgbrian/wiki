@@ -6,6 +6,7 @@ import aiofiles
 import magic
 
 from db.models import Document, Page
+from sockets import broadcast_document_update
 import utils
 
 
@@ -93,6 +94,12 @@ class DocumentProcessor():
                 number=1,
                 filepath=self.document.filepath
             )
+
+        # TODO: Clean this up once parsing logic is moved here.
+        # This is just to temporarily demonstrate/test the ability to broadcast.
+        self.document.status = 1
+        await self.document.asave()
+        await broadcast_document_update(self.document)
 
     async def split_pdf(self, filepath):
         """Split a pdf file into separate pages and save them as images.

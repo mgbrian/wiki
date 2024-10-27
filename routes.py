@@ -9,24 +9,23 @@ from asgiref.sync import sync_to_async
 import magic
 from pgvector.django import L2Distance, CosineDistance
 from quart import (Quart, render_template, redirect, request, jsonify, session,
-    url_for, send_from_directory, send_file, websocket, abort)
+    url_for, send_from_directory, send_file, abort)
 
+from __main__ import app
 from db.models import Document, Page, User, calculate_embeddings
 import env
 from processing import UnsupportedFileType, document_processor_queue, get_file_type, save_file
 import utils
 
 
-app = Quart(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+
 
 UPLOAD_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     'media/'
 )
 
-# To keep track of socket connections.
-connected_clients = {}
 
 # To keep track of async tasks running in the bg
 # See note below on keeping a reference to tasks:
@@ -163,21 +162,6 @@ async def search():
     return jsonify(results)
 
 
-async def broadcast_document_update(document):
-    """Update all clients of a document status change."""
-    for client in connected_clients.values():
-        await client.send_json(
-            {
-              'action': 'file-status-update',
-              'payload': {
-                  'filename': document.name,
-                  'id': document.id,
-                'status': document.get_status_display()
-              }
-            }
-        )
-
-
 @app.route('/upload', methods=['POST'])
 @admin_required
 async def upload_file():
@@ -308,25 +292,6 @@ async def delete_document(id):
         return jsonify({'error': f'Document {id} deleted.'}), 500
 
     return jsonify({'message': f'Document {id} deleted.'})
-
-
-@app.websocket('/ws/status/')
-async def status_socket():
-    # Connect new client.
-    client_id = await websocket.receive()
-    connected_clients[client_id] = websocket._get_current_object()
-
-    # Acknowldege connection.
-    await websocket.send_json({'action': 'connection-ack'})
-
-    # Ongoing while loop to keep the WebSocket connection open.
-    try:
-        while True:
-            await websocket.receive()
-    except Exception:
-        # Handle client disconnects/errors.
-        if client_id in connected_clients:
-            del connected_clients[client_id]
 
 
 @app.errorhandler(404)

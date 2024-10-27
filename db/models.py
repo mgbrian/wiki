@@ -13,6 +13,7 @@ from pgvector.django import VectorField, HnswIndex
 
 from image import Image
 from parser import parse_page_image
+from sockets import broadcast_document_update
 
 # TODO: Might want to consider using asyncio.to_thread for page parsing
 # to improve readability.
