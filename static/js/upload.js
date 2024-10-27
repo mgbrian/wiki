@@ -12,15 +12,18 @@ uploadForm.addEventListener("submit", uploadFile);
 async function uploadFile(event) {
   event.preventDefault();
 
+  // TODO: Standardize file vs document naming convention.
   const file = fileInput.files[0];
 
   if (!file) {
     alert("Please select a file!");
     return;
   }
+  const documentId = crypto.randomUUID();
 
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("id", documentId);
 
   try {
     const response = await fetch(FILE_UPLOAD_ENDPOINT, {
