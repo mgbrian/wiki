@@ -2,6 +2,7 @@ import asyncio
 from functools import wraps
 import json
 import os
+import uuid
 
 import aiofiles
 from asgiref.sync import sync_to_async
@@ -12,6 +13,7 @@ from quart import (Quart, render_template, redirect, request, jsonify, session,
 
 from db.models import Document, Page, User, calculate_embeddings
 import env
+from processing import UnsupportedFileType, document_processor_queue, get_file_type, save_file
 import utils
 
 
@@ -175,99 +177,42 @@ async def broadcast_document_update(document):
             }
         )
 
-
 @app.route('/upload', methods=['POST'])
 @admin_required
 async def upload_file():
     form = await request.files
     file = form.get('file')
+    document_id = form.get('id', str(uuid.uuid4()))
 
     if not file:
         return jsonify({"error": "No file provided."}), 400
 
-    mime = magic.Magic(mime=True)
-    # Read small chunk to detect mimetype
-    file_type = mime.from_buffer(file.read(1024))
-    file.seek(0)
-
-    if file_type == 'application/pdf':
-        split_document = True
-        # TODO: Parametrize!
-        document_type = 1
-
-    elif file_type.startswith('image/'):
-        # TODO: Perhaps standardize image params e.g. resolution, size limits, etc.
-        # Do this for both PDF pages and standalone images.
-        split_document = False
-        document_type = 2
-
-    else:
-        return jsonify({"error": "File must be a pdf or image."}), 400
-
     filename = file.filename
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    try:
+        file_type = await get_file_type(file)
+        file_info = await save_file(file)
 
-    async with aiofiles.open(filepath, 'wb') as f:
-        await f.write(file.read())
-
-    file_metadata = {
-        'filename': filename,
-        'path': filepath
-    }
-
-    document = await Document.objects.acreate(
-        name=filename,
-        filepath=filepath,
-        type=document_type
-    )
-    file_metadata['id'] = document.id
-
-    # Split PDF into separate image files.
-    if split_document:
-        def document_splitter_task_callback(document_splitter_task):
-            """Update document status after page splitting is done."""
-            # TODO: Handle errors here and in running the task.
-            background_tasks.discard(document_splitter_task)
-            # TODO: Better way to do this!
-            document.status = 1
-
-            document_save_task = asyncio.create_task(document.asave())
-            document_status_broadcast_task = asyncio.create_task(
-                broadcast_document_update(document)
-            )
-
-            pages = document_splitter_task.result()
-
-            for p in pages:
-                page_creation_task = asyncio.create_task(
-                    Page.objects.acreate(
-                        document=document,
-                        number=p['number'],
-                        filepath=p['filepath']
-                    )
-                )
-
-        document_pages_folder = os.path.join(os.path.dirname(filepath), str(document.id))
-        document_splitter_task = asyncio.create_task(
-            utils.save_pdf_as_images(filepath, document_pages_folder)
-        )
-        background_tasks.add(document_splitter_task)
-        document_splitter_task.add_done_callback(document_splitter_task_callback)
-
-    # If document is an image.
-    else:
-        document.status = 1
-        await document.asave()
-        document_status_broadcast_task = asyncio.create_task(
-            broadcast_document_update(document)
-        )
-        await Page.objects.acreate(
-            document=document,
-            number=1,
-            filepath=filepath
+        document = await Document.objects.acreate(
+            id=document_id,
+            name=filename,
+            filepath=file_info['filepath'],
+            type=1 if file_type == 'pdf' else 2 if file_type == 'image' else 0
         )
 
-    return jsonify({"message": "File uploaded successfully", 'metadata': file_metadata})
+        # TODO: Should this be in here? Document processing mishaps will be
+        # registered as status changes. If we're already here we're out of
+        # danger.
+        await document_processor_queue.enqueue(document)
+
+    except UnsupportedFileType as e:
+        return jsonify({"error": e}), 400
+
+    except Exception as e:
+        # TODO: Handle different error classes here appropriately.
+        print(type(e), e)
+        return jsonify({"error": "Something went wrong."}), 500
+
+    return jsonify({"message": "File uploaded successfully."})
 
 
 @app.route('/files', methods=['GET'])
