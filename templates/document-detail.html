@@ -47,7 +47,7 @@
 
 {% block page_js %}
 <script>
-  const DOCUMENT_ID = {{ document.id }};
+  const DOCUMENT_ID = "{{ document.id }}";
 </script>
 <script src="{{ url_for('static', filename='js/page-viewer.js') }}"></script>
 {% endblock %}
