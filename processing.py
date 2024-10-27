@@ -6,6 +6,8 @@ import aiofiles
 import magic
 
 from db.models import Document, Page
+from image import Image
+from parser import parse_page_image
 from sockets import broadcast_document_update
 import utils
 
@@ -86,9 +88,12 @@ class DocumentProcessor():
         """
         if self.document.type == 1:  # 'pdf'
             pages_info = await self.split_pdf(self.document.filepath)
-            await self.save_pages_to_db(self.document, pages_info)
+            await self.save_pages_to_db(pages_info)
 
         elif self.document.type == 2:  # 'image'
+            pages_info = [
+                {'number': 1, 'filepath': self.document.filepath}
+            ]
             _ = await Page.objects.acreate(
                 document=self.document,
                 number=1,
@@ -97,8 +102,11 @@ class DocumentProcessor():
 
         # TODO: Clean this up once parsing logic is moved here.
         # This is just to temporarily demonstrate/test the ability to broadcast.
-        self.document.status = 1
-        await self.document.asave()
+        # self.document.status = 1
+        # self.document = await self.document.asave()
+        # await self.document.arefresh_from_db()
+
+        await self.parse_pages(pages_info)
         await broadcast_document_update(self.document)
 
     async def split_pdf(self, filepath):
@@ -115,11 +123,10 @@ class DocumentProcessor():
 
         return await utils.save_pdf_as_images(filepath, pages_folder)
 
-    async def save_pages_to_db(self, document, pages_info):
+    async def save_pages_to_db(self, pages_info):
         """Split a pdf file into separate pages and save them as images.
 
         Args:
-            document: models.Document - The Document.
             pages_info: list of dict - List of dictionaries, each with a page's
                 info number and filepath.
 
@@ -127,18 +134,54 @@ class DocumentProcessor():
             list of dict: List of dictionaries, each with a page's info:
                 number and filepath.
         """
+        page_save_tasks = []
         for page_info in pages_info:
             # TODO: Handle case where page save fails.
-            page_creation_task = asyncio.create_task(
+            page_save_tasks.append(
                 Page.objects.acreate(
-                    document=document,
+                    document=self.document,
                     number=page_info['number'],
                     filepath=page_info['filepath']
                 )
             )
 
-    async def parse_pages(self):
-        pass
+        await asyncio.gather(*page_save_tasks)
+
+    async def parse_pages(self, pages_info):
+        """Parse all the given pages and update the page and document statuses.
+
+        Args:
+            pages_info: list of dict - A list of dicts each containing a page's
+                number and filepath.
+        """
+        at_least_one_failure = False
+        for page_info in pages_info:
+            page = await Page.objects.aget(document=self.document, number=page_info['number'])
+
+            try:
+                page_image = Image(page.filepath)
+                parse_result = await asyncio.to_thread(parse_page_image, page_image)
+
+                page.text = parse_result['text']
+                page.summary = parse_result['summary']
+                page.description = parse_result['description']
+                page.status = 1
+                await page.asave()
+
+            # TODO: Catch more specific Exceptions here.
+            except Exception as e:
+                page.status = 2
+                page.error_details = f'{type(e)}: {e}'
+                await page.asave()
+                at_least_one_failure = True
+
+        if at_least_one_failure:
+            self.document.status = 2
+        else:
+            self.document.status = 1
+
+        await self.document.asave()
+        await self.document.arefresh_from_db()
 
 
 class DocumentProcessorQueue():
@@ -170,7 +213,7 @@ class DocumentProcessorQueue():
                 await processor.process()
 
             except Exception as e:
-                # print(e)
+                print(e)
                 raise
                 pass
 

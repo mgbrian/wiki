@@ -1,5 +1,4 @@
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import os
 import uuid
 
@@ -14,10 +13,6 @@ from pgvector.django import VectorField, HnswIndex
 from image import Image
 from parser import parse_page_image
 from sockets import broadcast_document_update
-
-# TODO: Might want to consider using asyncio.to_thread for page parsing
-# to improve readability.
-page_parser_executor = ThreadPoolExecutor(max_workers=5)
 
 
 def documents_path():
@@ -127,34 +122,6 @@ class User(models.Model):
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     is_admin = models.BooleanField(default=False)
-
-
-@receiver(post_save, sender=Page)
-def parse_page(sender, instance, created, **kwargs):
-    """Parse a Page on creation."""
-    if created:
-        def _parse_image():
-            try:
-                page_image = Image(instance.filepath)
-                parse_result = parse_page_image(page_image)
-
-                instance.text = parse_result['text']
-                instance.summary = parse_result['summary']
-                instance.description = parse_result['description']
-                instance.status = 1
-                instance.save()
-
-            # TODO: Catch more specific Exceptions here.
-            except Exception as e:
-                instance.status = 2
-                instance.error_details = f'{type(e)}: {e}'
-                instance.save()
-                # Update document status to "error""
-                # TODO: Figure out more DRY way to do this.
-                instance.document.status = 2
-                instance.document.save()
-
-        page_parser_executor.submit(_parse_image)
 
 
 def calculate_embeddings(text):
