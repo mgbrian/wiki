@@ -205,7 +205,7 @@ async def upload_file():
         await document_processor_queue.enqueue(document)
 
     except UnsupportedFileType as e:
-        return jsonify({"error": e}), 400
+        return jsonify({"error": str(e)}), 400
 
     except Exception as e:
         # TODO: Handle different error classes here appropriately.

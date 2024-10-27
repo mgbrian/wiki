@@ -37,7 +37,8 @@ async function uploadFile(event) {
       fileInput.value = "";
       fetchFileList();
     } else {
-      alert("Failed to upload file");
+      let errorMessagePayload = await response.json();
+      alert("Failed to upload file. " + errorMessagePayload.error || "");
     }
   } catch (error) {
     console.error("Error uploading file:", error);
