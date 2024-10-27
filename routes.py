@@ -381,3 +381,32 @@ async def status_socket():
         # Handle client disconnects/errors.
         if client_id in connected_clients:
             del connected_clients[client_id]
+
+
+@app.errorhandler(404)
+async def handler_404(error):
+    return await render_template("error.html", status_code=404, error_message="Page Not Found"), 404
+
+
+@app.errorhandler(500)
+async def handler_500(error):
+    return await render_template("error.html", status_code=500, error_message="Server Error"), 500
+
+
+@app.errorhandler(403)
+async def handler_403(error):
+    return await render_template("error.html", status_code=403, error_message="Forbidden"), 403
+
+
+@app.errorhandler(405)
+async def handler_405(error):
+    return await render_template("error.html", status_code=405, error_message="Method Not Allowed"), 405
+
+
+@app.errorhandler(Exception)
+async def generic_error_handler(error):
+    """"Handler for any other HTTP errors not covered."""
+    status_code = getattr(error, 'code', 500)
+    error_message = error.name if hasattr(error, 'name') else "An unexpected error occurred"
+
+    return await render_template("error.html", status_code=status_code, error_message=error_message), status_code

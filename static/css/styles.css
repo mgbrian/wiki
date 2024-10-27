@@ -595,3 +595,18 @@ main.document-detail-page {
     font-size: 0.9rem;
     text-align: center;
 }
+
+/* Styles for Error Pages. */
+
+main.error-page {
+    justify-content: center;
+}
+
+main.error-page > * {
+    text-align: center;
+    margin: 10px;
+}
+
+main.error-page > h2 {
+    text-transform: uppercase;
+}
