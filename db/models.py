@@ -1,6 +1,7 @@
 import asyncio
-import os
 from concurrent.futures import ThreadPoolExecutor
+import os
+import uuid
 
 from asgiref.sync import async_to_sync
 from django.conf import settings
@@ -43,6 +44,7 @@ PAGE_STATUS_CODES = (
 
 
 class Document(models.Model):
+    id = models.CharField(max_length=50, default=uuid.uuid4, primary_key=True)
     name = models.CharField(max_length=255)
     filepath = models.FilePathField(path=documents_path)
     summary = models.TextField()
