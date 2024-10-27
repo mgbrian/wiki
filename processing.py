@@ -1,5 +1,21 @@
 import asyncio
+import os
 import uuid
+
+import aiofiles
+from db.models import Document
+import magic
+
+
+UPLOAD_FOLDER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'media/'
+)
+
+
+class UnsupportedFileType(Exception):
+    """Exception type for uploaded files that are not of a supported type."""
+    pass
 
 
 class DocumentProcessor():
@@ -8,14 +24,14 @@ class DocumentProcessor():
     A document processor instance takes a single document and sees it through
     the entire processing pipeline.
     """
-    def __init__(self, file, id=None):
+    def __init__(self, file, document_id=None):
         """
         Args:
             file: file - A file to process.
-            id: str - A unique id for the document. Optional. If none is provided
-                one will be generated.
+            document_id: str - A unique id for the document.
+                Optional. If none is provided one will be generated.
         """
-        self.id = str(id) or str(uuid.uuid4())
+        self.document_id = str(id) or str(uuid.uuid4())
         self.file = file
 
     async def process(self):
@@ -29,6 +45,62 @@ class DocumentProcessor():
         3. Split file into pages if necessary
         4. Parse pages
         """
+        pass
+
+    async def get_file_type(self):
+        """Figure out file type."""
+        mime = magic.Magic(mime=True)
+        # Read small chunk to detect mimetype
+        file_type = mime.from_buffer(self.file.read(1024))
+        self.file.seek(0)
+
+        if file_type == 'application/pdf':
+            return 'pdf'
+
+        elif file_type.startswith('image/'):
+            # TODO: Perhaps standardize image params e.g. resolution, size limits, etc.
+            # Do this for both PDF pages and standalone images.
+            return 'image'
+
+        else:
+            raise UnsupportedFileType('File must be a pdf or image.')
+
+    async def save_file(self):
+        """Save file to filesystem.
+
+        Returns:
+            dict: Dictionary with filename and path
+        """
+        # TODO: Take care of filename collisions in the filesystem.
+        filename = self.file.filename
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+
+        async with aiofiles.open(filepath, 'wb') as f:
+            await f.write(self.file.read())
+
+        return {'filename': filename, 'filepath': filepath}
+
+    async def save_to_db(self, filename, filepath, document_type):
+        """Save Document to database.
+
+        Returns:
+            Document: The created document object.
+        """
+        # TODO: Take care of unlikely event that there is a Document already
+        # with the same id.
+        document = await Document.objects.acreate(
+            id=self.document_id,
+            name=filename,
+            filepath=filepath,
+            type=document_type
+        )
+
+        return document
+
+    async def split_document(self):
+        pass
+
+    async def parse_pages(self):
         pass
 
 
