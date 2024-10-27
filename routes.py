@@ -177,6 +177,7 @@ async def broadcast_document_update(document):
             }
         )
 
+
 @app.route('/upload', methods=['POST'])
 @admin_required
 async def upload_file():
