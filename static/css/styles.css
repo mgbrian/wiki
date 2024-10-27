@@ -115,25 +115,34 @@ footer {
 /* Search Page */
 
 #search-mode-selector-container {
+    position: relative;
+    /* So it's "physically" above the results box and interactable. */
+    z-index: 10;
     display: flex;
     flex-direction: row;
-    /* justify-content: ; */
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
+    height: 45px;
+    width: calc(100% - 2px);
     margin-top: 5px;
     margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
     /* padding: 0 15px; */
     font-size: 0.8rem;
-    border-radius: 10px;
+    background: white;
 }
+
 #search-mode-selector-container * {
     /* outline: 1px solid red; */
     display: flex;
     align-items: center;
-    height: 100%;
+    height: calc(100% - 10px);
 }
 
 #search-mode-container-header {
+    /* Nudge a little to the right to unobstruct results-box border. */
+    margin-left: 1px;
     padding: 5px;
     font-weight: bold;
     text-transform: uppercase;
@@ -165,6 +174,7 @@ footer {
 }
 
 #semantic-similarity-threshold-slider-container {
+    position: relative;
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -175,35 +185,50 @@ footer {
 }
 
 #semantic-similarity-threshold-value {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    justify-content: center;
     font-size: 0.75rem;
+    text-align: center;
     /* font-weight: bold; */
 }
 
 #search {
     width: 100%;
     height: var(--search-box-height);
-    padding: 5px;
+    padding: 5px 10px;
 }
 
 #results-box {
     position: absolute;
+    width: 100%;
+    height: fit-content;
+    max-height: calc(75vh - var(--header-height) - var(--footer-height) - 40px);
     /* Offset by height of search box + search mode selectors so it's directly
        under the search box. TODO: Make this less hacky.
     */
     /* top: var(--search-box-height); */
-    top: calc(33px + var(--search-box-height));
-    width: 100%;
-    border: 1px solid grey;
-    padding: 0;
+    top: calc(-1px + var(--search-box-height));
+    /* Offset and bring below search mode selector container. */
+    z-index: 0;
+    padding-top: 50px;
 
-    overflow-y: scroll;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
     margin-bottom: calc(2 * var(--footer-height));
-    height: fit-content;
-    /* The 75vh is 100vh - main's margin-top of 25vh. TODO: Parametrize! */
-    max-height: calc(75vh - var(--header-height) - var(--footer-height) - 40px);
+
+    border: 1px solid grey;
+    overflow-y: scroll;
+}
+
+#results-box a:first-child {
+    border-top: 0.1px solid #333;
 }
 
 #results-box > a {
+    display: block;
     color: black;
 }
 
