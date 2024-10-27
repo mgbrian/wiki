@@ -16,6 +16,10 @@
     display: none !important;
 }
 
+.invisible {
+    visibility: hidden !important;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -30,6 +34,7 @@ main {
   relative to this and not the entire document. */
     position: relative;
     width: 80%;
+    min-width: fit-content;
     max-width: var(--content-max-width);
     margin-top: 25vh;
     display: flex;
@@ -129,6 +134,7 @@ footer {
     margin-left: auto;
     margin-right: auto;
     /* padding: 0 15px; */
+    padding-left: 5px;
     font-size: 0.8rem;
     background: white;
 }
@@ -141,8 +147,7 @@ footer {
 }
 
 #search-mode-container-header {
-    /* Nudge a little to the right to unobstruct results-box border. */
-    margin-left: 1px;
+    display: none;
     padding: 5px;
     font-weight: bold;
     text-transform: uppercase;
@@ -198,6 +203,11 @@ footer {
     width: 100%;
     height: var(--search-box-height);
     padding: 5px 10px;
+    idth: 90%;
+    height: var(--search-box-height);
+    padding: 5px 10px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #results-box {

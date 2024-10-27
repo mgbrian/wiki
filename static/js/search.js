@@ -35,8 +35,8 @@ semanticSearchRadioButton.addEventListener("change", () => {
 });
 
 semanticSearchSlider.addEventListener("change", (event) => {
-  sliderValue = event.target.value;
-  semanticSearchSliderValueDisplay.textContent = `>${sliderValue * 100}% similarity`;
+  // sliderValue = event.target.value;
+  // semanticSearchSliderValueDisplay.textContent = `>${sliderValue * 100}% similarity`;
   updateSearchResults();
 });
 
@@ -121,9 +121,11 @@ async function search(searchText) {
 
 function toggleSemanticSearchSliderVisibility() {
   if (keywordSearchRadioButton.checked) {
-    semanticSearchSliderContainer.classList.add("hidden");
+    // invisible instead of hidden so its width is accounted for
+    // in main's min-width: fit-content on small devices.
+    semanticSearchSliderContainer.classList.add("invisible");
   } else {
-    semanticSearchSliderContainer.classList.remove("hidden");
+    semanticSearchSliderContainer.classList.remove("invisible");
   }
 }
 
