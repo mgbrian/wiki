@@ -37,6 +37,7 @@ main {
     min-width: fit-content;
     max-width: var(--content-max-width);
     margin-top: 25vh;
+    margin-bottom: var(--footer-height);
     display: flex;
     flex-direction: column;
 }
@@ -44,6 +45,7 @@ main {
 header,
 footer {
     position: fixed;
+    z-index: 100;
     width: 100%;
     display: flex;
     align-items: center;
