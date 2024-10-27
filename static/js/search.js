@@ -48,7 +48,8 @@ searchInputBox.addEventListener("input", updateSearchResults);
 async function updateSearchResults() {
   // Clear the results box of its current contents.
   resultsBox.innerHTML = "";
-  let searchResults = await search(searchInputBox.value);
+  let searchTerm = searchInputBox.value;
+  let searchResults = await search(searchTerm);
 
   // Hide the results box if there are no results to show. It is hidden by
   // default -- see HTML/CSS.
@@ -59,11 +60,15 @@ async function updateSearchResults() {
   }
 
   for (let result of searchResults) {
+    let resultText = result.text;
+    if (getSelectedSearchMode() == "keyword") {
+      resultText = highlightTermInText(searchTerm, result.text);
+    }
     resultsBox.innerHTML += `
       <a href="${DOCUMENT_ENDPOINT_PREFIX}/${result.document.id}#${result.number}">
           <p class="search-result">
               <small class="search-result-header">${result.document.name} - ${result.number}</small>
-              <span class="search-result-text">${result.text}</span>
+              <span class="search-result-text">${resultText}</span>
           </p>
       </a>
     `;
@@ -125,4 +130,26 @@ function toggleSemanticSearchSliderVisibility() {
 function getSelectedSearchMode() {
   const selectedMode = document.querySelector('input[name="mode"]:checked');
   return selectedMode ? selectedMode.value : null;
+}
+
+/* Highlight all occurences of a given string in a piece of text.
+
+  @param {string} term - The term to highlight.
+  @param {string} text - The text within which to highlight the term.
+
+  @returns {string} - The text with all occurences of term surrounded with a
+    <span> with a class that can be styled to achieve the highlight.
+*/
+function highlightTermInText(term, text) {
+  if (!term || !text) return text;
+
+  // Escape special characters
+  const escapedTerm = term.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+
+  // Only match full-word occurences of term in text i.e. 'cat' shouldn't get
+  // highlighted in 'category'
+  const regex = new RegExp(`\\b(${escapedTerm})\\b`, "gi");
+  // const regex = new RegExp(`(${escapedTerm})`, "gi");
+
+  return text.replace(regex, '<span class="highlight">$1</span>');
 }

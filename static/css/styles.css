@@ -259,6 +259,13 @@ footer {
     text-align: justify;
 }
 
+.search-result-text .highlight {
+    display: inline-block;
+    padding: 2px 0px;
+    background: #0275ff;
+    color: #fff;
+}
+
 /* Admin Page Styles */
 
 #file-upload-form,
