@@ -30,33 +30,38 @@ UPLOAD_FOLDER = os.path.join(
 background_tasks = set()
 
 
-def login_required(f):
-    """View decorator to confirm login. Redirects to login page on failure."""
-    @wraps(f)
-    async def decorated_view(*args, **kwargs):
-        if "username" not in session:
-            return redirect(url_for("login"))
+def login_required(admin_required=False, json_response=False):
+    """View decorator to confirm login and optionally admin status.
+       Redirects or returns JSON error on failure.
 
-        return await f(*args, **kwargs)
+    Args:
+        admin_required: bool - Whether to check for admin status. Default False.
+        json_response: bool - Whether to return a JSON response instead of
+            redirecting on failure. Default False.
+    """
+    def decorator(f):
+        @wraps(f)
+        async def decorated_view(*args, **kwargs):
+            # Login check
+            if "username" not in session:
+                if json_response:
+                    return jsonify({"error": "Login required"}), 401
 
-    return decorated_view
+                return redirect(url_for("login"))
 
+            # Admin status check
+            if admin_required:
+                user = await User.objects.aget(username=session["username"])
 
-def admin_required(f):
-    """View decorator to confirm admin status. Redirects home on failure."""
-    @wraps(f)
-    async def decorated_view(*args, **kwargs):
-        if "username" not in session:
-            return redirect(url_for("login"))
+                if not user or not user.is_admin:
+                    if json_response:
+                        return jsonify({"error": "Admin access required"}), 403
 
-        user = await User.objects.aget(username=session["username"])
+                    return redirect(url_for("index"))
 
-        if not user or not user.is_admin:
-            return redirect(url_for("index"))
-
-        return await f(*args, **kwargs)
-
-    return decorated_view
+            return await f(*args, **kwargs)
+        return decorated_view
+    return decorator
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -94,19 +99,19 @@ async def logout():
 
 
 @app.route('/', methods=['GET'])
-@login_required
+@login_required()
 async def index():
     return await render_template('index.html')
 
 
 @app.route('/admin', methods=['GET'])
-@admin_required
+@login_required(admin_required=True)
 async def admin():
     return await render_template('admin.html')
 
 
 @app.route('/search', methods=['POST'])
-@login_required
+@login_required(json_response=True)
 async def search():
     search_type = 'keyword'  # or 'semantic'
     results = []
@@ -160,7 +165,7 @@ async def search():
 
 
 @app.route('/upload', methods=['POST'])
-@admin_required
+@login_required(admin_required=True, json_response=True)
 async def upload_file():
     form = await request.files
     file = form.get('file')
@@ -198,7 +203,7 @@ async def upload_file():
 
 
 @app.route('/files', methods=['GET'])
-@admin_required
+@login_required(admin_required=True, json_response=True)
 async def list_files():
 
     documents = await sync_to_async(list)(Document.objects.all())
@@ -217,7 +222,7 @@ async def list_files():
 
 
 @app.route('/document/<id>/download', methods=['GET'])
-@login_required
+@login_required()
 async def serve_document(id):
     try:
         document = await Document.objects.aget(id=id)
@@ -228,7 +233,7 @@ async def serve_document(id):
 
 
 @app.route('/document/<id>', methods=['GET'])
-@login_required
+@login_required()
 async def document_detail(id):
     try:
         document = await Document.objects.aget(id=id)
@@ -239,7 +244,7 @@ async def document_detail(id):
 
 
 @app.route('/page/<document_id>/<number>', methods=['GET'])
-@login_required
+@login_required()
 async def serve_page_image(document_id, number):
     try:
         page = await Page.objects.aget(document=document_id, number=number)
@@ -250,7 +255,7 @@ async def serve_page_image(document_id, number):
 
 
 @app.route('/page/<document_id>/<number>/info', methods=['GET'])
-@login_required
+@login_required(json_response=True)
 async def get_page_metadata(document_id, number):
 
     try:
@@ -273,7 +278,7 @@ async def get_page_metadata(document_id, number):
 
 
 @app.route('/document/<id>/delete', methods=['GET'])
-@admin_required
+@login_required(admin_required=True, json_response=True)
 async def delete_document(id):
     try:
         document = await Document.objects.aget(id=id)
@@ -304,6 +309,10 @@ async def handler_500(error):
 @app.errorhandler(403)
 async def handler_403(error):
     return await render_template("error.html", status_code=403, error_message="Forbidden"), 403
+
+@app.errorhandler(401)
+async def handler_401(error):
+    return await render_template("error.html", status_code=401, error_message="Login Required"), 401
 
 
 @app.errorhandler(405)
