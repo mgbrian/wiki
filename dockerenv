@@ -1,0 +1,9 @@
+# Environment variables for Docker Compose (update!)
+
+# Database Credentials
+POSTGRES_USER=sampleuser
+POSTGRES_PASSWORD=samplepassword
+POSTGRES_DB=sampledb
+
+# Application port
+PORT=5000
