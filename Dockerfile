@@ -5,6 +5,9 @@ WORKDIR /app
 
 COPY . /app
 
+RUN apk update && apk add -y --no-install-recommends --no-cache libmagic
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
 RUN chmod +x install.h && ./install.h
 
 # Make port 5000 available to the world outside this container
