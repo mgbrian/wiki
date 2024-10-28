@@ -4,10 +4,8 @@ import json
 import os
 import uuid
 
-import aiofiles
 from asgiref.sync import sync_to_async
-import magic
-from pgvector.django import L2Distance, CosineDistance
+from pgvector.django import CosineDistance
 from quart import (Quart, render_template, redirect, request, jsonify, session,
     url_for, send_from_directory, send_file, abort)
 
@@ -15,7 +13,6 @@ from __main__ import app
 from db.models import Document, Page, User, calculate_embeddings
 import env
 from processing import UnsupportedFileType, document_processor_queue, get_file_type, save_file
-import utils
 
 
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
