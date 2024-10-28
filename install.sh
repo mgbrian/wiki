@@ -17,10 +17,10 @@ if [ "$OS" = "Darwin" ]; then
     DEP_FILE="dependencies/macos.txt"
     INSTALL_CMD="brew install"
 elif [ -f /etc/debian_version ]; then
-    DEP_FILE="dependencies/linux.txt"
+    DEP_FILE="dependencies/debian.txt"
     INSTALL_CMD="sudo apt-get install -y"
 elif [ -f /etc/alpine-release ]; then
-    DEP_FILE="dependencies/linux.txt"
+    DEP_FILE="dependencies/alpine.txt"
     INSTALL_CMD="sudo apk add"
 else
     echo "Error: Unsupported OS. Only macOS, Debian and Alpine are supported."
