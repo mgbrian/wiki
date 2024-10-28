@@ -40,6 +40,13 @@ class Document(models.Model):
         default=DocumentStatusCodes.PROCESSING)
     type = models.IntegerField(choices=DocumentTypeCodes.choices,
         default=DocumentTypeCodes.UNKNOWN)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-time_created']
+
+    def __str__(self):
+        return self.name
 
 
 class Page(models.Model):
@@ -87,6 +94,9 @@ class Page(models.Model):
                 opclasses=["vector_l2_ops"],
             )
         ]
+
+    def __str__(self):
+        return f'{self.document.name} - {self.number}'
 
     def save(self, *args, **kwargs):
         # Presumably we're not going to be saving often, so OK to just
