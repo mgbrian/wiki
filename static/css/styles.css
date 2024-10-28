@@ -545,6 +545,7 @@ main.document-detail-page {
     outline: 1px solid black;
     border-radius: 0px;
     background: #fff;
+    cursor: pointer;
 }
 
 .page-thumbnail:hover {
