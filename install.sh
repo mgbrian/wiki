@@ -112,7 +112,7 @@ if [ -f submodules.txt ]; then
 fi
 
 # Pull Ollama models if necessary.
-if [ -f models.txt ]; then
+if [ -f dependencies/models.txt ]; then
     echo ""
     echo "Pulling Ollama models..."
     if ! command -v ollama &> /dev/null; then
@@ -125,7 +125,7 @@ if [ -f models.txt ]; then
         ollama pull "$model" || { echo "Failed to pull $model"; }
         tput rc
         tput ed
-    done < models.txt
+    done < dependencies/models.txt
 fi
 
 echo ""
