@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apk update && apk add -y --no-install-recommends --no-cache libmagic
+RUN apk update && apk add -y --no-install-recommends --no-cache curl libmagic
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
 RUN chmod +x install.h && ./install.h
