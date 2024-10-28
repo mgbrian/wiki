@@ -282,6 +282,10 @@ footer {
 
 /* Admin Page Styles */
 
+main.admin-page {
+    margin-top: 100px;
+}
+
 #file-upload-form,
 #login-form {
     display: flex;
