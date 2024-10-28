@@ -2,41 +2,33 @@ import asyncio
 import os
 import uuid
 
-from asgiref.sync import async_to_sync
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 import ollama
 from pgvector.django import VectorField, HnswIndex
-
-from image import Image
-from parser import parse_page_image
-from sockets import broadcast_document_update
 
 
 def documents_path():
     return os.path.abspath(os.path.join(settings.BASE_DIR, '../media'))
 
 
-DOCUMENT_STATUS_CODES = (
-    (0, "Processing"),
-    (1, "Ready"),
-    (2, "Error"),
-)
+class DocumentStatusCodes(models.IntegerChoices):
+    PROCESSING = 0
+    READY = 1
+    ERROR = 2
 
-DOCUMENT_TYPES = (
-    (0, "unknown"),
-    (1, "pdf"),
-    (2, "image"),
-    (3, "text"),
-)
 
-PAGE_STATUS_CODES = (
-    (0, "Processing"),
-    (1, "Ready"),
-    (2, "Error"),
-)
+class DocumentTypeCodes(models.IntegerChoices):
+    UNKNOWN = 0
+    PDF = 1
+    IMAGE = 2
+    TEXT = 3
+
+
+class PageStatusCodes(models.IntegerChoices):
+    PROCESSING = 0
+    READY = 1
+    ERROR = 2
 
 
 class Document(models.Model):
@@ -44,8 +36,10 @@ class Document(models.Model):
     name = models.CharField(max_length=255)
     filepath = models.FilePathField(path=documents_path)
     summary = models.TextField()
-    status = models.IntegerField(choices=DOCUMENT_STATUS_CODES, default=0)
-    type = models.IntegerField(choices=DOCUMENT_TYPES, default=0)
+    status = models.IntegerField(choices=DocumentStatusCodes.choices,
+        default=DocumentStatusCodes.PROCESSING)
+    type = models.IntegerField(choices=DocumentTypeCodes.choices,
+        default=DocumentTypeCodes.UNKNOWN)
 
 
 class Page(models.Model):
@@ -64,7 +58,8 @@ class Page(models.Model):
     # anything.
     description = models.TextField(null=True, blank=True)
     description_embeddings = VectorField(dimensions=768, blank=True, null=True)
-    status = models.IntegerField(choices=PAGE_STATUS_CODES, default=0)
+    status = models.IntegerField(choices=PageStatusCodes.choices,
+        default=PageStatusCodes.PROCESSING)
     error_details = models.TextField(null=True, blank=True)
 
     class Meta:

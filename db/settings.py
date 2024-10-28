@@ -22,6 +22,5 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
-    'django.contrib.postgres',
     'db',
 )
