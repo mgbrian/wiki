@@ -8,5 +8,5 @@ POSTGRES_USER=sampleuser
 POSTGRES_PASSWORD=samplepassword
 POSTGRES_DB=sampledb
 
-# Application port
+# App service container port.
 PORT=5000
