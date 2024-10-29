@@ -58,7 +58,7 @@ python3 app.py
 
 3. `docker compose up`
 
-    - The site should be accessible `http://localhost:<PORT>` locally. This offers direct access to the app server.
+    - The site should be accessible at `http://localhost:<PORT>` locally. This offers direct access to the app server.
     - If all the steps above were followed, it should be accessible at `https://localhost` locally or publicly at `https://<DOMAIN_NAME>`. This uses Nginx as an added layer in front of the app server.
 
         (`<PORT>` and `<DOMAIN_NAME>` as set in `dockerenv`)
