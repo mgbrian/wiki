@@ -1,5 +1,6 @@
 version: "3.8"
 
+# TODO: !! Ensure env.py is fully populated and db migrations are applied
 services:
   wiki:
     build: .
