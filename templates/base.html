@@ -23,7 +23,7 @@
                         </a>
                     </li>
                     {% else %}
-                    <li><a href="{{ url_for('login') }}">Log In</a></li>
+                    {% block login_link %}<li><a href="{{ url_for('login') }}">Log In</a></li>{% endblock %}
                     {% endif %}
                 </ul>
             </nav>
