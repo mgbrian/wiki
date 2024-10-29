@@ -123,6 +123,10 @@ footer {
 
 /* Search Page */
 
+main.search-page {
+    --content-max-width: 700px;
+}
+
 #search-mode-selector-container {
     position: relative;
     /* So it's "physically" above the results box and interactable. */
@@ -271,7 +275,18 @@ footer {
 
 #results-box .search-result-text {
     text-align: justify;
+    /* height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; */
 }
+
+/* #results-box .search-result-text:hover,
+#results-box .search-result-text:focus {
+    overflow: unset;
+    white-space: unset;
+    height: fit-content;
+} */
 
 .search-result-text .highlight {
     display: inline-block;
