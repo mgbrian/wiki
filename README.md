@@ -35,17 +35,17 @@ The installer script below has only been written to target macOS, Debian or Alpi
 
 #### Running the Server
 
-**For all subsequent runs, ensure the venv is activated:**
+1. For all subsequent runs, ensure the venv is activated:
 
-```
-source .requirements/bin/activate
-```
+    ```
+    source .requirements/bin/activate
+    ```
 
-Then run the server:
+2. Then run the server:
 
-```
-python3 app.py
-```
+    ```
+    python3 app.py
+    ```
 
 ### With Docker
 
