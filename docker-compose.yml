@@ -17,11 +17,27 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - certbot_certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
+    env_file:
+      - ./dockerenv
     depends_on:
       - wiki
+      - certbot # Ensure Certbot is up to provide certificates before Nginx starts
     restart: always
+    command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_certs:/etc/letsencrypt # Store certificates here
+      - certbot_logs:/var/log/letsencrypt
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done'
+    environment:
+      - DOMAIN_NAME
 
   db:
     image: postgres:14
@@ -33,3 +49,5 @@ services:
 
 volumes:
   postgres_data:
+  certbot_certs:
+  certbot_logs:
