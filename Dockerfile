@@ -21,7 +21,12 @@ RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
     echo "os.environ.setdefault('POSTGRES_PORT', '5432')" >> /app/env.py
 
 # Apply database migrations
-RUN source .requirements/bin/activate && python  manage.py migrate
+RUN source .requirements/bin/activate && python manage.py migrate
+
+# TODO: Add this to deployment instructions for the benefit of bare-metal Linux deployments.
+# Also see GPU considerations here:
+# https://github.com/ollama/ollama/blob/main/docs/linux.md
+RUN ollama serve
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
