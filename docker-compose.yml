@@ -30,6 +30,7 @@ services:
     restart: always
     command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/${DOMAIN_NAME}.conf && nginx -g 'daemon off;'"
 
+  # TODO: Restart Nginx when certificates get updated.
   certbot:
     image: certbot/certbot
     volumes:
@@ -47,6 +48,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
+# TODO: Sync Ollama directory to local Ollama dir so models are shared.
 volumes:
   postgres_data:
   certbot_certs:

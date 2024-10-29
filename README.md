@@ -1,18 +1,24 @@
 # Wiki
 
-## Running
+## Deployment
 
 ### Sans Docker
 
-This is only expected to work macOS/Linux/Unix+.
+This is only expected to work well on macOS/Debian (and derivatives)/Alpine.
 
 **The first time you pull the repository, run:**
 
 ---
 
+1. On macOS, ensure Homebrew and Ollama are installed.
+
+2. Make the install script executable:
+
 ```
 chmod +x install.sh
 ```
+
+3. Run the install script. This will install all dependencies.
 
 ```
 ./install.sh
@@ -41,6 +47,15 @@ Then run the server:
 python3 app.py
 ```
 
-### Docker
+### With Docker
 
-TODO: Add Instructions.
+1. Update `dockerenv` accordingly.
+2. Obtain SSL certificates if this hasn't been done before. Update <DOMAIN_NAME> below accordingly and run:
+
+```
+  docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d <DOMAIN_NAME in dockerenv>
+```
+
+3. `docker compose up`
+
+4. This should be accessible at `http://localhost` locally, or publicly at the set domain.
