@@ -1,0 +1,55 @@
+version: "3.8"
+
+# TODO: !! Ensure env.py is fully populated and db migrations are applied
+services:
+  wiki:
+    build: .
+    ports:
+      - "${PORT}:5000" # Set port from the environment.
+    volumes:
+      - .:/app
+    env_file: # See  dockerenv for sample values and update accordingly.
+      - ./dockerenv
+    restart: on-failure
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - certbot_certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
+    env_file:
+      - ./dockerenv
+    depends_on:
+      - wiki
+      - certbot # Ensure Certbot is up to provide certificates before Nginx starts
+    restart: always
+    command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/${DOMAIN_NAME}.conf && nginx -c /etc/nginx/${DOMAIN_NAME}.conf -g 'daemon off;'"
+
+  # TODO: Restart Nginx when certificates get updated.
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certbot_certs:/etc/letsencrypt # Store certificates here
+      - certbot_logs:/var/log/letsencrypt
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done'
+    env_file:
+      - ./dockerenv
+
+  db:
+    image: postgres:14
+    env_file: # Load variables from dockerenv file
+      - ./dockerenv
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+# TODO: Sync Ollama directory to local Ollama dir so models are shared.
+volumes:
+  postgres_data:
+  certbot_certs:
+  certbot_logs:

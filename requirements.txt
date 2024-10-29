@@ -6,7 +6,6 @@ pgvector
 numpy
 
 # Need to brew install poppler on macOS
-# TODO: Add this to install script.
 pdf2image
 
 aiofiles
@@ -23,5 +22,4 @@ google-generativeai
 
 # Need to brew install libmagic on macOS
 # or sudo apt-get install libmagic1 on Debian
-# TODO: Add to install script.
 python-magic

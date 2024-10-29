@@ -10,6 +10,42 @@ source .requirements/bin/activate || { echo "Failed to activate virtual environm
 
 echo ""
 echo "Installing main repository dependencies..."
+
+# Install OS-level dependencies
+OS=$(uname -s)
+if [ "$OS" = "Darwin" ]; then
+    DEP_FILE="dependencies/macos.txt"
+    INSTALL_CMD="brew install"
+elif [ -f /etc/debian_version ]; then
+    DEP_FILE="dependencies/debian.txt"
+    INSTALL_CMD="sudo apt-get install -y"
+elif [ -f /etc/alpine-release ]; then
+    DEP_FILE="dependencies/alpine.txt"
+    INSTALL_CMD="sudo apk add"
+else
+    echo "Error: Unsupported OS. Only macOS, Debian and Alpine are supported."
+    exit 1
+fi
+
+if [ -f "$DEP_FILE" ]; then
+
+    # Need brew on macOS to install packages.
+    if [ "$OS" = "Darwin"]; then
+        if ! command -v brew &> /dev/null; then
+            echo "Homebrew is not installed. Please install and re-run!"
+            exit 1
+        fi
+    fi
+
+    while read -r package; do
+        if [ -n "$package" ]; then
+            echo "Installing $package..."
+            $INSTALL_CMD "$package"
+        fi
+    done < "$DEP_FILE"
+fi
+
+# Install Python dependencies
 if [ -f requirements.txt ]; then
     # Save the current cursor position
     tput sc
@@ -76,7 +112,8 @@ if [ -f submodules.txt ]; then
 fi
 
 # Pull Ollama models if necessary.
-if [ -f models.txt ]; then
+# TODO: Should ensure Ollama is running if this is in Docker container.
+if [ -f dependencies/models.txt ]; then
     echo ""
     echo "Pulling Ollama models..."
     if ! command -v ollama &> /dev/null; then
@@ -89,7 +126,7 @@ if [ -f models.txt ]; then
         ollama pull "$model" || { echo "Failed to pull $model"; }
         tput rc
         tput ed
-    done < models.txt
+    done < dependencies/models.txt
 fi
 
 echo ""
