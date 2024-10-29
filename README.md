@@ -53,7 +53,7 @@ python3 app.py
 2. Obtain SSL certificates if this hasn't been done before. Update `<DOMAIN_NAME>` below accordingly and run:
 
 ```
-  docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d <DOMAIN_NAME> in dockerenv>
+  docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d <DOMAIN_NAME>
 ```
 
 3. `docker compose up`
