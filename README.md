@@ -49,13 +49,16 @@ python3 app.py
 
 ### With Docker
 
-1. Update `dockerenv` accordingly.
-2. Obtain SSL certificates if this hasn't been done before. Update <DOMAIN_NAME> below accordingly and run:
+1. Update `dockerenv` accordingly. Skip setting `DOMAIN_NAME`, and step 2 below if this is not a production deployment.
+2. Obtain SSL certificates if this hasn't been done before. Update `<DOMAIN_NAME>` below accordingly and run:
 
 ```
-  docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d <DOMAIN_NAME in dockerenv>
+  docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d <DOMAIN_NAME> in dockerenv>
 ```
 
 3. `docker compose up`
 
-4. This should be accessible at `http://localhost` locally, or publicly at the set domain.
+    - The site should be accessible `http://localhost:<PORT>` locally. This offers direct access to the app server.
+    - If all the steps above were followed, it should be accessible at `https://localhost` locally or publicly at `https://<DOMAIN_NAME>`. This uses Nginx as an added layer in front of the app server.
+
+        (`<PORT>` and `<DOMAIN_NAME>` as set in `dockerenv`)
