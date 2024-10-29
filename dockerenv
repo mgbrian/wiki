@@ -1,5 +1,8 @@
 # Environment variables for Docker Compose (update!)
 
+# Naked domain is fine here. Nginx will also target www.~
+DOMAIN_NAME=example.com
+
 # Database Credentials
 POSTGRES_USER=sampleuser
 POSTGRES_PASSWORD=samplepassword

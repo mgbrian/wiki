@@ -29,7 +29,7 @@ services:
       - wiki
       - certbot # Ensure Certbot is up to provide certificates before Nginx starts
     restart: always
-    command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/${DOMAIN_NAME}.conf && nginx -g 'daemon off;'"
+    command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/${DOMAIN_NAME}.conf && nginx -c /etc/nginx/${DOMAIN_NAME}.conf -g 'daemon off;'"
 
   # TODO: Restart Nginx when certificates get updated.
   certbot:
@@ -38,8 +38,8 @@ services:
       - certbot_certs:/etc/letsencrypt # Store certificates here
       - certbot_logs:/var/log/letsencrypt
     entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done'
-    environment:
-      - DOMAIN_NAME
+    env_file:
+      - ./dockerenv
 
   db:
     image: postgres:14
