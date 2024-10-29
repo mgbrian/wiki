@@ -4,9 +4,9 @@
 
 ### Sans Docker
 
-This is only expected to work well on macOS/Debian (and derivatives)/Alpine.
+The installer script below has only been written to target macOS, Debian or Alpine. The app itself should work on any Unix OS but you'll have to figure out the installation process.
 
-**The first time you pull the repository, run:**
+**The first time you pull the repository:**
 
 ---
 
@@ -14,24 +14,24 @@ This is only expected to work well on macOS/Debian (and derivatives)/Alpine.
 
 2. Make the install script executable:
 
-```
-chmod +x install.sh
-```
+    ```
+    chmod +x install.sh
+    ```
 
 3. Run the install script.
 
-```
-./install.sh
-```
-
-The installation step will install all requirements in a `venv` and collect all required
-environment variables in an `env.py`. 
+    ```
+    ./install.sh
+    ```
+    
+    The installation step will install all requirements in a `venv` folder named `.requirements` and collect all required
+    environment variables in a file named `env.py`. 
 
 4. Populate the environment variables accordingly and run the command below to set up the database (this will automatically create it if it doesn't already exist before setting up the tables): 
 
-```
-python3 manage.py migrate
-```
+    ```
+    source .requirements/bin/activate && python3 manage.py migrate
+    ```
 
 #### Running the Server
 
