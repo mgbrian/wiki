@@ -112,6 +112,7 @@ if [ -f submodules.txt ]; then
 fi
 
 # Pull Ollama models if necessary.
+# TODO: Should ensure Ollama is running if this is in Docker container.
 if [ -f dependencies/models.txt ]; then
     echo ""
     echo "Pulling Ollama models..."
