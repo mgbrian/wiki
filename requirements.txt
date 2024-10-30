@@ -1,3 +1,4 @@
+hypercorn
 quart
 django==4.2
 psycopg2-binary
@@ -6,6 +7,7 @@ pgvector
 numpy
 
 # Need to brew install poppler on macOS
+# poppler-utils (Debian/Alpine)
 pdf2image
 
 aiofiles
@@ -22,4 +24,5 @@ google-generativeai
 
 # Need to brew install libmagic on macOS
 # or sudo apt-get install libmagic1 on Debian
+# libmagic on Alpine
 python-magic
