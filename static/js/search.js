@@ -150,8 +150,8 @@ function highlightTermInText(term, text) {
 
   // Only match full-word occurences of term in text i.e. 'cat' shouldn't get
   // highlighted in 'category'
-  const regex = new RegExp(`\\b(${escapedTerm})\\b`, "gi");
-  // const regex = new RegExp(`(${escapedTerm})`, "gi");
+  // const regex = new RegExp(`\\b(${escapedTerm})\\b`, "gi");
+  const regex = new RegExp(`(${escapedTerm})`, "gi");
 
   return text.replace(regex, '<span class="highlight">$1</span>');
 }
