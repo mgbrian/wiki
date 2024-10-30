@@ -336,16 +336,44 @@ main.admin-page {
 }
 
 #files-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 20px;
 }
 
-#files-list-container h2 {
+#files-list-container-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    flex-direction: column;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#files-list-container-header h2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 1.5rem;
     text-align: center;
-    margin-bottom: 0px;
-    padding: 10px 0px 0px 0px;
+}
+
+#files-list-container-header span {
+    /* Upload icon */
+    position: absolute;
+    margin-left: auto;
+    width: fit-content;
+    right: 0;
+    z-index: 1;
+    cursor: pointer;
+    /* Hover effect is grouped with .download-button */
 }
 
 #file-list {
+    width: 100%;
     padding: 0;
     list-style: none;
     font-size: 0.85rem;
@@ -382,7 +410,9 @@ main.admin-page {
 }
 
 #file-list .download-button:hover,
-#file-list .download-button:focus {
+#file-list .download-button:focus,
+.upload-button:hover,
+.upload-button:focus {
     color: #4d74b8;
 }
 

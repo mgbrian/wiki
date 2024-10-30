@@ -12,14 +12,17 @@
 
 {% block content %}
 <main class="admin-page">
-    <form id="file-upload-form" method="POST">
+    <form id="file-upload-form" method="POST" class="hidden">
         <h2>Upload File</h2>
         <input type="file" id="file-input" name="file">
         <button type="submit">Upload</button>
     </form>
 
     <div id="files-list-container">
-        <h2>Library</h2>
+        <div id="files-list-container-header">
+            <h2>Library</h2>
+            <span class="material-symbols-outlined upload-button">upload</span>
+        </div>
         <ul id="file-list"></ul>
     </div>
 </main>
