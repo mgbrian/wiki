@@ -94,6 +94,9 @@ if os.environ.get('GROQ_API_KEY', '').strip():
     llama_3_1_70b_groq = Model('llama-3.1-70b-versatile', groq_api, 8000)
     llama_3_1_405b_groq = Model('llama-3.1-405b-reasoning', groq_api, 16000)
 
+    llama_3_2_11b_vision_groq = Model('llama-3.2-11b-vision-preview', groq_api, 8000)
+    llama_3_2_90b_vision_groq = Model('llama-3.2-90b-vision-preview', groq_api, 8000)
+
 if os.environ.get('OLLAMA_CLIENT_HOST', '').strip():
     # Ollama models have a default context window of 2048 (as of Aug 2024),
     # to save on GPU memory
