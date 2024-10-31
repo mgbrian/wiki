@@ -163,6 +163,7 @@ cython_debug/
 
 
 env.py
+dockerenv
 # venv folder
 .requirements/
 media/
