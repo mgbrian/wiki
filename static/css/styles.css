@@ -40,6 +40,8 @@ main {
     margin-bottom: var(--footer-height);
     display: flex;
     flex-direction: column;
+    /* Ensure very small pages always have some space around actual content. */
+    padding: 5px;
 }
 
 header,
@@ -125,6 +127,9 @@ footer {
 
 main.search-page {
     --content-max-width: 700px;
+    /* Override padding set on other pages as this page has already been tuned
+       for very small screens. */
+    padding: 0;
 }
 
 #search-mode-selector-container {
@@ -378,6 +383,10 @@ main.admin-page {
     list-style: none;
     font-size: 0.85rem;
     border: 0.5px solid #edecec;
+
+    border: 4px solid #e0dddd;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 #file-list li {
