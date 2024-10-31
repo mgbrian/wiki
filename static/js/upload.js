@@ -29,11 +29,46 @@ async function queueFiles(event) {
     console.log("No files.");
     return;
   }
-  fileUploadQueue["queued"].push(...Array.from(fileInput.files));
+  for (let file of fileInput.files) {
+    console.log(file);
+    fileUploadQueue["queued"].push({
+      name: file.name,
+      size: file.size,
+      id: crypto.randomUUID(),
+      file: file,
+    });
+  }
   // Reset file input
   fileInput.value = "";
-  fileUploadQueueUl.innerHTML += renderFileUploadQueue();
-  toggleFileUploadQueueVisibility();
+  renderFileUploadQueue();
+  processQueue();
+}
+
+/* Attempt to upload queued files. Mark upload failures accordingly. */
+async function processQueue() {
+  while (fileUploadQueue["queued"].length > 0) {
+    const file = fileUploadQueue["queued"].shift();
+    fileUploadQueue["uploading"].push(file);
+
+    try {
+      const fileUploadSuccessful = await uploadFile(file);
+      // Remove file from uploading queue
+      fileUploadQueue["uploading"] = fileUploadQueue["uploading"].filter(
+        (f) => f.id !== file.id,
+      );
+      // ..and add it to failed queue if it failed
+      if (!fileUploadSuccessful) {
+        fileUploadQueue["failed"].push(file);
+      }
+    } catch (error) {
+      fileUploadQueue["failed"].push(file);
+      // TODO: Render errors somewhere in the UI
+      console.error("Upload failed for file:", file, error);
+    }
+
+    // Update queue display
+    renderFileUploadQueue();
+  }
 }
 
 /* Upload a given file.
@@ -42,15 +77,13 @@ async function queueFiles(event) {
 */
 async function uploadFile(file) {
   // TODO: Standardize file vs document naming convention.
-
   if (!file) {
     return;
   }
-  const documentId = crypto.randomUUID();
 
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("id", documentId);
+  formData.append("file", file.file);
+  formData.append("id", file.id);
 
   try {
     const response = await fetch(FILE_UPLOAD_ENDPOINT, {
@@ -59,18 +92,17 @@ async function uploadFile(file) {
     });
 
     if (response.ok) {
-      // ** 1. Remove file from upload queue (and file list -- maybe have own queue structure) and add to file list with status uploaded
-      // 2. If error mark it as such and display in UI
-      // 3. Call toggleUploadQueueDisplay
-      fileInput.value = "";
       fetchFileList();
+      return true;
     } else {
       let errorMessagePayload = await response.json();
       alert("Failed to upload file. " + errorMessagePayload.error || "");
+      return false;
     }
   } catch (error) {
     console.error("Error uploading file:", error);
     alert("An error occurred while uploading the file.");
+    return false;
   }
 }
 
@@ -108,10 +140,12 @@ function toggleFileUploadQueueVisibility() {
   @returns {string} - HTML to display the given files in the file upload queue.
 */
 function renderFileUploadQueue() {
-  let resultHTML = "";
+  toggleFileUploadQueueVisibility();
+
+  fileUploadQueueUl.innerHTML = "";
   for (let file of fileUploadQueue["queued"]) {
-    resultHTML += `
-      <li data-status="queued" data-id="">
+    fileUploadQueueUl.innerHTML += `
+      <li data-status="queued" data-id="${file.id}">
           <span>${file.name}</span>
           <small class="file-status-indicator">Queued</small>
           <span class="material-symbols-outlined remove-upload-button">cancel</span>
@@ -119,23 +153,22 @@ function renderFileUploadQueue() {
     `;
   }
   for (let file of fileUploadQueue["uploading"]) {
-    resultHTML += `
-      <li data-status="uploading" data-id="">
+    fileUploadQueueUl.innerHTML += `
+      <li data-status="uploading" data-id="${file.id}">
           <span>${file.name}</span>
           <small class="file-status-indicator">Uploading</small>
       </li>
     `;
   }
   for (let file of fileUploadQueue["failed"]) {
-    resultHTML += `
-      <li data-status="failed" data-id="">
+    fileUploadQueueUl.innerHTML += `
+      <li data-status="failed" data-id="${file.id}">
           <span>${file.name}</span>
           <small class="file-status-indicator">Failed</small>
           <span class="material-symbols-outlined retry-upload-button">refresh</span>
       </li>
     `;
   }
-  return resultHTML;
 }
 
 function renderFileDisplay(file) {
