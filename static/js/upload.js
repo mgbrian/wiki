@@ -166,9 +166,33 @@ function renderFileUploadQueue() {
           <span>${file.name}</span>
           <small class="file-status-indicator">Failed</small>
           <span class="material-symbols-outlined retry-upload-button">refresh</span>
+          <span class="material-symbols-outlined remove-upload-button">cancel</span>
       </li>
     `;
   }
+
+  const removeUploadButtons = fileUploadQueueUl.querySelectorAll(
+    ".remove-upload-button",
+  );
+
+  for (let button of removeUploadButtons) {
+    button.addEventListener("click", removeUpload);
+  }
+}
+
+/* Remove an file from the upload queue. Event handler for the remove upload buttons. */
+function removeUpload(event) {
+  let fileId = event.currentTarget.parentElement.dataset.id;
+
+  // Remove from uploadQueue -- the only two subqueues it could be in
+  fileUploadQueue["uploading"] = fileUploadQueue["uploading"].filter(
+    (f) => f.id !== fileId,
+  );
+  fileUploadQueue["failed"] = fileUploadQueue["failed"].filter(
+    (f) => f.id !== fileId,
+  );
+
+  renderFileUploadQueue();
 }
 
 function renderFileDisplay(file) {
