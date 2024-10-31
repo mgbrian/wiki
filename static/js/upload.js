@@ -1,22 +1,49 @@
 const uploadForm = document.getElementById("file-upload-form");
 const fileInput = document.getElementById("file-input");
+const uploadButton = document.querySelector(
+  "#files-list-container .upload-button",
+);
+const fileUploadQueueContainer = document.getElementById(
+  "file-upload-queue-container",
+);
+const fileUploadQueueUl = document.getElementById("file-upload-queue");
 const fileList = document.getElementById("file-list");
 const FILE_UPLOAD_ENDPOINT = "/upload";
 const FILE_LIST_ENDPOINT = "/files";
 const DOCUMENT_ENDPOINT_PREFIX = "/document";
 
+const fileUploadQueue = {
+  queued: [],
+  uploading: [],
+  failed: [],
+};
+
 document.addEventListener("DOMContentLoaded", fetchFileList);
-uploadForm.addEventListener("submit", uploadFile);
+uploadButton.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", queueFiles);
 
-/* Event handler for the file upload form. */
-async function uploadFile(event) {
-  event.preventDefault();
+/* Add selected files to the file upload queue. Event handler for fileInput change.*/
+async function queueFiles(event) {
+  // ** TODO: Dedupe! **
+  if (!fileInput.files.length) {
+    console.log("No files.");
+    return;
+  }
+  fileUploadQueue["queued"].push(...Array.from(fileInput.files));
+  // Reset file input
+  fileInput.value = "";
+  fileUploadQueueUl.innerHTML += renderFileUploadQueue();
+  toggleFileUploadQueueVisibility();
+}
 
+/* Upload a given file.
+
+  @param {object} - Object representing the file to upload.
+*/
+async function uploadFile(file) {
   // TODO: Standardize file vs document naming convention.
-  const file = fileInput.files[0];
 
   if (!file) {
-    alert("Please select a file!");
     return;
   }
   const documentId = crypto.randomUUID();
@@ -32,8 +59,9 @@ async function uploadFile(event) {
     });
 
     if (response.ok) {
-      // alert("File uploaded successfully!");
-      // Reset file input and refresh file list
+      // ** 1. Remove file from upload queue (and file list -- maybe have own queue structure) and add to file list with status uploaded
+      // 2. If error mark it as such and display in UI
+      // 3. Call toggleUploadQueueDisplay
       fileInput.value = "";
       fetchFileList();
     } else {
@@ -60,6 +88,54 @@ async function fetchFileList() {
   } catch (error) {
     console.error("Error fetching file list:", error);
   }
+}
+
+/* Show the file queue if it contains anything. Hide it otherwise. */
+function toggleFileUploadQueueVisibility() {
+  if (
+    fileUploadQueue["queued"].length ||
+    fileUploadQueue["uploading"].length ||
+    fileUploadQueue["failed"].length
+  ) {
+    fileUploadQueueContainer.classList.remove("hidden");
+  } else {
+    fileUploadQueueContainer.classList.add("hidden");
+  }
+}
+
+/* Generate HTML for a list of files to be added to the file upload queue display.
+
+  @returns {string} - HTML to display the given files in the file upload queue.
+*/
+function renderFileUploadQueue() {
+  let resultHTML = "";
+  for (let file of fileUploadQueue["queued"]) {
+    resultHTML += `
+      <li data-status="queued" data-id="">
+          <span>${file.name}</span>
+          <small class="file-status-indicator">Queued</small>
+          <span class="material-symbols-outlined remove-upload-button">cancel</span>
+      </li>
+    `;
+  }
+  for (let file of fileUploadQueue["uploading"]) {
+    resultHTML += `
+      <li data-status="uploading" data-id="">
+          <span>${file.name}</span>
+          <small class="file-status-indicator">Uploading</small>
+      </li>
+    `;
+  }
+  for (let file of fileUploadQueue["failed"]) {
+    resultHTML += `
+      <li data-status="failed" data-id="">
+          <span>${file.name}</span>
+          <small class="file-status-indicator">Failed</small>
+          <span class="material-symbols-outlined retry-upload-button">refresh</span>
+      </li>
+    `;
+  }
+  return resultHTML;
 }
 
 function renderFileDisplay(file) {

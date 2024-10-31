@@ -14,7 +14,7 @@
 <main class="admin-page">
     <form id="file-upload-form" method="POST" class="hidden">
         <h2>Upload File</h2>
-        <input type="file" id="file-input" name="file">
+        <input type="file" id="file-input" name="file" multiple>
         <button type="submit">Upload</button>
     </form>
 
@@ -22,6 +22,25 @@
         <div id="files-list-container-header">
             <h2>Library</h2>
             <span class="material-symbols-outlined upload-button">upload</span>
+        </div>
+        <div id="file-upload-queue-container" class="hidden">
+            <div id="file-upload-queue-container-header">
+                <h3>Upload Queue</h3>
+            </div>
+            <ul id="file-upload-queue">
+                <!-- <li data-status="queued" data-id="">
+                    <span>679.png</span>
+                    <small class="file-status-indicator">Queued</small>
+                    <span class="material-symbols-outlined retry-upload-button">refresh</span>
+                    <span class="material-symbols-outlined remove-upload-button">cancel</span>
+                </li>
+                <li data-status="uploading" data-id="">
+                    <span>Somefile.pdf</span>
+                    <small class="file-status-indicator">Uploading</small>
+                    <span class="material-symbols-outlined retry-upload-button">refresh</span>
+                    <span class="material-symbols-outlined remove-upload-button">cancel</span>
+                </li> -->
+            </ul>
         </div>
         <ul id="file-list"></ul>
     </div>

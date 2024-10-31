@@ -366,7 +366,7 @@ main.admin-page {
     text-align: center;
 }
 
-#files-list-container-header span {
+#files-list-container-header .upload-button {
     /* Upload icon */
     position: absolute;
     margin-left: auto;
@@ -377,7 +377,19 @@ main.admin-page {
     /* Hover effect is grouped with .download-button */
 }
 
-#file-list {
+#file-upload-queue-container {
+    width: 100%;
+}
+
+#file-upload-queue-container h3 {
+    text-align: center;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #555;
+}
+
+#file-list,
+#file-upload-queue {
     width: 100%;
     padding: 0;
     list-style: none;
@@ -389,11 +401,43 @@ main.admin-page {
     overflow: hidden;
 }
 
-#file-list li {
+#file-upload-queue {
+    font-size: 0.75rem;
+    border-radius: 0;
+    transition: transform 250ms ease-in-out;
+    transform-origin: top;
+}
+
+#file-upload-queue-container.hidden #file-upload-queue {
+    transform: scaleY(0);
+}
+
+#file-list li,
+#file-upload-queue li {
     display: flex;
     align-items: center;
     margin-bottom: 2px;
     padding: 8px 10px;
+}
+
+#file-upload-queue li {
+    width: 33%;
+    height: 26px; /* So height is held even without material icons. */
+    padding: 2px 10px;
+    margin: 5px 0;
+    background: rgba(191, 186, 186, 0.4);
+}
+
+#file-upload-queue li[data-status="queued"] {
+    width: 33%;
+}
+
+#file-upload-queue li[data-status="uploading"] {
+    width: 50%;
+}
+
+#file-upload-queue li[data-status="failed"] {
+    width: 90%;
 }
 
 #file-list li:nth-of-type(odd) {
@@ -405,7 +449,9 @@ main.admin-page {
 }
 
 #file-list .delete-button,
-#file-list .download-button {
+#file-list .download-button,
+.remove-upload-button,
+.retry-upload-button {
     margin-left: 10px;
     cursor: pointer;
     display: flex;
@@ -425,7 +471,8 @@ main.admin-page {
     color: #4d74b8;
 }
 
-#file-list .file-status-indicator {
+#file-list .file-status-indicator,
+#file-upload-queue .file-status-indicator {
     margin-left: auto;
     padding: 2px 8px;
     border-radius: 5px;
