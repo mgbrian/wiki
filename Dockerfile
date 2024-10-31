@@ -2,12 +2,17 @@ FROM python:3.11-alpine
 
 WORKDIR /app
 
-COPY . /app
-
 RUN apk update && apk add --no-cache curl libmagic
+
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-RUN chmod +x install.sh && ./install.sh
+# Enable sudo
+# https://stackoverflow.com/questions/49225976/use-sudo-inside-dockerfile-alpine
+RUN set -ex && apk --no-cache add sudo
+
+COPY . /app
+
+RUN chmod +x install.sh && sh install.sh
 
 # Update env.py
 RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
