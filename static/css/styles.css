@@ -370,6 +370,7 @@ main.admin-page {
     /* Upload icon */
     position: absolute;
     margin-left: auto;
+    margin-right: 10px;
     width: fit-content;
     right: 0;
     z-index: 1;
