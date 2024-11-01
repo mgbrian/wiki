@@ -17,6 +17,7 @@ pydantic
 requests
 
 openai
+tiktoken
 groq
 ollama
 google-generativeai
