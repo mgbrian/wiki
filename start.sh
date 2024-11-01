@@ -1,5 +1,11 @@
 #!/bin/sh
-source /app/.requirements/bin/activate
+
+# Differentiate between Docker/ local dev setups.
+if [ -d "/app/.requirements" ]; then
+    source /app/.requirements/bin/activate
+else
+    source .requirements/bin/activate
+fi
 
 python manage.py migrate
 
