@@ -16,9 +16,8 @@ jinja2
 pydantic
 requests
 
-# Uncomment if using OpenAI or Groq models.
-# openai
-# groq
+openai
+groq
 ollama
 google-generativeai
 
