@@ -24,7 +24,10 @@ RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
     echo "os.environ.setdefault('POSTGRES_DB_USER', os.getenv('POSTGRES_USER', 'default_user'))" >> env.py && \
     echo "os.environ.setdefault('POSTGRES_DB_PASSWORD', os.getenv('POSTGRES_PASSWORD', ''))" >> env.py && \
     echo "os.environ.setdefault('POSTGRES_HOST', 'db')" >> env.py && \
-    echo "os.environ.setdefault('POSTGRES_PORT', '5432')" >> env.py
+    echo "os.environ.setdefault('POSTGRES_PORT', '5432')" >> env.py && \
+    echo "os.environ.setdefault('GOOGLE_API_KEY', os.getenv('GOOGLE_API_KEY', ''))" >> env.py && \
+    echo "os.environ.setdefault('OPENAI_API_KEY', os.getenv('OPENAI_API_KEY', ''))" >> env.py && \
+    echo "os.environ.setdefault('GROQ_API_KEY', os.getenv('GROQ_API_KEY', ''))" >> env.py
 
 # Apply database migrations
 #RUN  .requirements/bin/python manage.py migrate
