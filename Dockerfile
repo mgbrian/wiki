@@ -2,7 +2,7 @@ FROM python:3.11-alpine
 
 WORKDIR /app
 
-RUN apk update && apk add --no-cache curl libmagic
+RUN apk update && apk add --no-cache curl libmagic openssl
 
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
