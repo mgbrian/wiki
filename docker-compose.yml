@@ -6,13 +6,16 @@ services:
     build: .
     ports:
       - "${PORT}:5000" # Set port from the environment.
-    volumes:
-      - .:/app
+    #volumes:
+    #  - .:/app
     env_file: # See  dockerenv for sample values and update accordingly.
       - ./dockerenv
     restart: on-failure
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - db-net
 
   nginx:
     image: nginx:latest
@@ -41,11 +44,20 @@ services:
       - ./dockerenv
 
   db:
-    image: postgres:14
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
     env_file: # Load variables from dockerenv file
       - ./dockerenv
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - db-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
     restart: always
 
 # TODO: Sync Ollama directory to local Ollama dir so models are shared.
@@ -53,3 +65,7 @@ volumes:
   postgres_data:
   certbot_certs:
   certbot_logs:
+
+networks:
+  db-net:
+    driver: bridge

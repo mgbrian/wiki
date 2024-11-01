@@ -14,9 +14,10 @@ COPY . /app
 
 RUN chmod +x install.sh && sh install.sh
 
-# Update env.py
+# Update env.py. First addition to env.py overwrites whatever install.sh put into it.
 RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
     DJANGO_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
+    echo "import os" > env.py && \
     echo "os.environ.setdefault('FLASK_SECRET_KEY', '${FLASK_SECRET_KEY}')" >> env.py && \
     echo "os.environ.setdefault('DJANGO_SECRET_KEY', '${DJANGO_SECRET_KEY}')" >> env.py && \
     echo "os.environ.setdefault('POSTGRES_DB_NAME', os.getenv('POSTGRES_DB', 'default_db'))" >> env.py && \
@@ -26,14 +27,17 @@ RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
     echo "os.environ.setdefault('POSTGRES_PORT', '5432')" >> env.py
 
 # Apply database migrations
-RUN source .requirements/bin/activate && python manage.py migrate
+#RUN  .requirements/bin/python manage.py migrate
 
 # TODO: Add this to deployment instructions for the benefit of bare-metal Linux deployments.
 # Also see GPU considerations here:
 # https://github.com/ollama/ollama/blob/main/docs/linux.md
-RUN ollama serve
+#RUN ollama serve
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
 
-CMD ["hypercorn", "--workers=3", "--bind", "0.0.0.0:5000", "app:app"]
+#RUN chmod +x start.sh
+# CMD ["/app/start.sh"]
+#CMD ["/app/.requirements/bin/hypercorn", "--workers=3", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["/app/.requirements/bin/python", "/app/manage.py", "migrate"]
