@@ -19,6 +19,7 @@ services:
     networks:
       - db-net
       - ollama-net
+      - nginx-net
 
   nginx:
     image: nginx:latest
@@ -28,6 +29,8 @@ services:
     volumes:
       - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
       - certbot_certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
+    networks:
+      - nginx-net
     env_file:
       - ./dockerenv
     depends_on:
@@ -86,6 +89,9 @@ volumes:
 
 networks:
   db-net:
+    driver: bridge
+
+  nginx-net:
     driver: bridge
 
   ollama-net:
