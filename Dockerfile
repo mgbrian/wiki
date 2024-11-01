@@ -37,7 +37,7 @@ RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
 
-#RUN chmod +x start.sh
-# CMD ["/app/start.sh"]
+RUN chmod +x start.sh
+CMD ["/app/start.sh"]
 #CMD ["/app/.requirements/bin/hypercorn", "--workers=3", "--bind", "0.0.0.0:5000", "app:app"]
-CMD ["/app/.requirements/bin/python", "/app/manage.py", "migrate"]
+#CMD ["/app/.requirements/bin/python", "/app/manage.py", "migrate"]
