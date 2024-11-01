@@ -1,6 +1,10 @@
 from quart import websocket
 
-from __main__ import app
+# See reasoning in routes.py
+try:
+    from __main__ import app
+except ImportError:
+    from app import app
 
 # To keep track of socket connections.
 connected_clients = {}

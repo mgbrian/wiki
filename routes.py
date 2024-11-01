@@ -9,7 +9,19 @@ from pgvector.django import CosineDistance
 from quart import (Quart, render_template, redirect, request, jsonify, session,
     url_for, send_from_directory, send_file, abort)
 
-from __main__ import app
+# 1. The refactor to move the app definition to the app module was done to allow
+#    importing socket functionality from other places e.g. models, without cyclic
+#    import issues.
+# 2. For this to work, we have to import from __main__ as opposed to app, when running
+#    app.py directly. In this case importing from app instead of __main__ causes the routes
+#    not to get registered.
+# 3. When running using Hypercorn, then __main__ is not app.py, thus we'd need to
+#    import from app as in the except block below.'
+try:
+    from __main__ import app
+except ImportError:
+    from app import app
+
 from db.models import Document, Page, User, calculate_embeddings
 import env
 from processing import UnsupportedFileType, document_processor_queue, get_file_type, save_file
