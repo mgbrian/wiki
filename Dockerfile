@@ -4,7 +4,8 @@ WORKDIR /app
 
 RUN apk update && apk add --no-cache curl libmagic openssl
 
-RUN curl -fsSL https://ollama.com/install.sh | sh
+# Use Ollama Docker container instead.
+# RUN curl -fsSL https://ollama.com/install.sh | sh
 
 # Enable sudo
 # https://stackoverflow.com/questions/49225976/use-sudo-inside-dockerfile-alpine
