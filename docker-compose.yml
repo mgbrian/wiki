@@ -12,10 +12,13 @@ services:
       - ./dockerenv
     restart: on-failure
     depends_on:
+      ollama:
+        condition: service_started
       db:
         condition: service_healthy
     networks:
       - db-net
+      - ollama-net
 
   nginx:
     image: nginx:latest
@@ -68,6 +71,13 @@ services:
       retries: 10
     restart: always
 
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    networks:
+      - ollama-net
+
 # TODO: Sync Ollama directory to local Ollama dir so models are shared.
 volumes:
   postgres_data:
@@ -76,4 +86,7 @@ volumes:
 
 networks:
   db-net:
+    driver: bridge
+
+  ollama-net:
     driver: bridge
