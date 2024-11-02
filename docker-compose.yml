@@ -29,6 +29,7 @@ services:
     volumes:
       # https://github.com/docker-library/docs/tree/master/nginx#using-environment-variables-in-nginx-configuration-new-in-119
       - ./nginx/templates:/etc/nginx/templates
+      - ./static:/static
       - ./certbot/certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
     networks:
       - nginx-net
