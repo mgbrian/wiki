@@ -54,7 +54,8 @@ async function queueFiles(event) {
   @param {string} fileId - The id of a file in the failed list that should be
     moved to the queued list.
 */
-async function requeueFailedFile(fileId) {
+async function requeueFailedFile(event) {
+  let fileId = event.currentTarget.parentElement.dataset.id;
   const file = fileUploadQueue["failed"].filter((f) => f.id === fileId)[0];
 
   if (!file) {
@@ -196,7 +197,7 @@ function renderFileUploadQueue() {
       <li data-status="failed" data-id="${file.id}">
           <span>${file.name}</span>
           <small class="file-status-indicator">Failed</small>
-          <span class="material-symbols-outlined retry-upload-button" onclick=requeueFailedFile("${file.id}")>refresh</span>
+          <span class="material-symbols-outlined retry-upload-button">refresh</span>
           <span class="material-symbols-outlined remove-upload-button">cancel</span>
       </li>
     `;
@@ -208,6 +209,14 @@ function renderFileUploadQueue() {
 
   for (let button of removeUploadButtons) {
     button.addEventListener("click", removeUpload);
+  }
+
+  const retryUploadButtons = fileUploadQueueUl.querySelectorAll(
+    ".retry-upload-button",
+  );
+
+  for (let button of retryUploadButtons) {
+    button.addEventListener("click", requeueFailedFile);
   }
 }
 
