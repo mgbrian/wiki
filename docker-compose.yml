@@ -29,7 +29,7 @@ services:
     volumes:
       # https://github.com/docker-library/docs/tree/master/nginx#using-environment-variables-in-nginx-configuration-new-in-119
       - ./nginx/templates:/etc/nginx/templates
-      - certbot_certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
+      - ./certbot/certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
     networks:
       - nginx-net
     env_file:
@@ -44,7 +44,7 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
-      - certbot_certs:/etc/letsencrypt # Store certificates here
+      - ./certbot/certs:/etc/letsencrypt # Store certificates here
       - certbot_logs:/var/log/letsencrypt
     entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done'
     env_file:
@@ -85,7 +85,6 @@ services:
 # TODO: Sync Ollama directory to local Ollama dir so models are shared.
 volumes:
   postgres_data:
-  certbot_certs:
   certbot_logs:
 
 networks:

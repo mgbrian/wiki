@@ -50,12 +50,7 @@ The installer script below has only been written to target macOS, Debian or Alpi
 ### With Docker
 
 1. Duplicate `dockerenv_sample` into `dockerenv` and update all variables accordingly. Skip setting `DOMAIN_NAME`, and step 2 below if this is not a production deployment.
-2. Obtain SSL certificates if this hasn't been done before. Update `<DOMAIN_NAME>` below accordingly and run:
-
-```
-  docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d <DOMAIN_NAME>
-```
-
+2. Obtain SSL certificates if this hasn't been done before for the current server. Follow the steps in [certbot/README.md](certbot/README.md).
 3. `docker compose up`
 
    - The site should be accessible at `http://localhost:<PORT>` locally. This offers direct access to the app server.

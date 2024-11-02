@@ -2,6 +2,8 @@
 
 # Naked domain is fine here. Nginx will also target www.~
 DOMAIN_NAME=example.com
+# Email for certbot certificate issuance
+CERTBOT_EMAIL=email@example.com
 
 # Database Credentials
 POSTGRES_USER=sampleuser
