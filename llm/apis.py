@@ -201,6 +201,7 @@ class OllamaAPI(OpenAIAPI):
 
         self.chat_endpoint = f"{host}/api/chat"
         self.model_list_endpoint = f"{host}/api/tags"
+        self.model_pull_endpoint = f"{host}/api/pull"
 
     def list_models(self):
         response = requests.get(self.model_list_endpoint)
@@ -209,6 +210,36 @@ class OllamaAPI(OpenAIAPI):
         return set(
             [model['name'] for model in response_data['models']]
         )
+
+    def pull_model(self, name):
+        """Pull a model.
+
+        TODO: Allow this to run as an async generator.
+
+        Args:
+            name: str - The name of the model to pull, with an optional tag.
+                e.g. llama3.2 (untagged) or llama3.2:latest (tagged).
+                See: https://ollama.com/library
+
+        Returns:
+            bool - True if pull successful. False otherwise.
+        """
+        try:
+            response = requests.post(self.model_pull_endpoint,
+                json={"name": name, "stream": False}, stream=False)
+
+            response_data = json.loads(response.content)
+
+            if response_data.get('status', '') == 'success':
+                print(f'Model {name} pulled successfully.')
+                return True
+
+            # Force us into the except block to reuse the messaging there.
+            raise Exception()
+
+        except Exception:
+            print(f'Model {name} pull failed.')
+            return False
 
     def generate_message(self, role, text, images=None):
         """TODO: Make this a class method?"""
