@@ -31,6 +31,10 @@ server {
         alias /static/;
     }
 
+    location /media/ {
+        alias /media/;
+    }
+
     location / {
         proxy_pass http://wiki_backend;
 
