@@ -27,7 +27,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      # https://github.com/docker-library/docs/tree/master/nginx#using-environment-variables-in-nginx-configuration-new-in-119
+      - ./nginx/templates:/etc/nginx/templates
       - certbot_certs:/etc/letsencrypt # Shared with Certbot for SSL certificates
     networks:
       - nginx-net
@@ -37,7 +38,7 @@ services:
       - wiki
       - certbot # Ensure Certbot is up to provide certificates before Nginx starts
     restart: always
-    command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/${DOMAIN_NAME}.conf && nginx -c /etc/nginx/${DOMAIN_NAME}.conf -g 'daemon off;'"
+    #command: /bin/sh -c "envsubst '\$DOMAIN_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/${DOMAIN_NAME}.conf && nginx -c /etc/nginx/${DOMAIN_NAME}.conf -g 'daemon off;'"
 
   # TODO: Restart Nginx when certificates get updated.
   certbot:
