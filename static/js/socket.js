@@ -1,4 +1,5 @@
-const SOCKET_ENDPOINT = `ws://${window.location.host}/ws/status/`;
+const PROTOCOL = window.location.protocol.includes("https") ? "wss" : "ws";
+const SOCKET_ENDPOINT = `${PROTOCOL}://${window.location.host}/ws/status/`;
 let socket;
 const clientId = crypto.randomUUID(); // Identify ourselves to server.
 
