@@ -2,7 +2,7 @@
 services:
   certbot:
     image: certbot/certbot
-    command: certonly --standalone --non-interactive --agree-tos -m "$${CERTBOT_EMAIL}" -d "$${DOMAIN_NAME}"
+    entrypoint: /bin/sh -c 'certbot certonly --standalone --non-interactive --agree-tos -m "<FILL IN EMAIL>" -d "<FILL IN DOMAIN NAME>"
     env_file:
       - ../dockerenv
     volumes:
