@@ -7,6 +7,9 @@ const fileUploadQueueContainer = document.getElementById(
   "file-upload-queue-container",
 );
 const fileUploadQueueUl = document.getElementById("file-upload-queue");
+// const retryUploadButton = document.querySelector(
+//   "#file-upload-queue .retry-upload-button",
+// );
 const fileList = document.getElementById("file-list");
 const FILE_UPLOAD_ENDPOINT = "/upload";
 const FILE_LIST_ENDPOINT = "/files";
@@ -17,6 +20,8 @@ const fileUploadQueue = {
   uploading: [],
   failed: [],
 };
+// Whether or not the queue is currently being processed.
+let queueProcessing = false;
 
 document.addEventListener("DOMContentLoaded", fetchFileList);
 uploadButton.addEventListener("click", () => fileInput.click());
@@ -44,8 +49,33 @@ async function queueFiles(event) {
   processQueue();
 }
 
+/* Re-add a failed file to the queue -- onclick handler for retry upload buttons.
+
+  @param {string} fileId - The id of a file in the failed list that should be
+    moved to the queued list.
+*/
+async function requeueFailedFile(fileId) {
+  const file = fileUploadQueue["failed"].filter((f) => f.id === fileId)[0];
+
+  if (!file) {
+    return;
+  }
+  fileUploadQueue["queued"].push(file);
+
+  // Remove from failed list.
+  fileUploadQueue["failed"] = fileUploadQueue["failed"].filter(
+    (f) => f.id !== fileId,
+  );
+  renderFileUploadQueue();
+  processQueue();
+}
+
 /* Attempt to upload queued files. Mark upload failures accordingly. */
 async function processQueue() {
+  if (queueProcessing) {
+    return;
+  }
+  queueProcessing = true;
   while (fileUploadQueue["queued"].length > 0) {
     const file = fileUploadQueue["queued"].shift();
     fileUploadQueue["uploading"].push(file);
@@ -69,6 +99,7 @@ async function processQueue() {
     // Update queue display
     renderFileUploadQueue();
   }
+  queueProcessing = false;
 }
 
 /* Upload a given file.
@@ -165,7 +196,7 @@ function renderFileUploadQueue() {
       <li data-status="failed" data-id="${file.id}">
           <span>${file.name}</span>
           <small class="file-status-indicator">Failed</small>
-          <span class="material-symbols-outlined retry-upload-button">refresh</span>
+          <span class="material-symbols-outlined retry-upload-button" onclick=requeueFailedFile("${file.id}")>refresh</span>
           <span class="material-symbols-outlined remove-upload-button">cancel</span>
       </li>
     `;
