@@ -29,7 +29,7 @@ RUN FLASK_SECRET_KEY=$(openssl rand -base64 15 | tr -dc 'a-zA-Z0-9') && \
     echo "os.environ.setdefault('GOOGLE_API_KEY', os.getenv('GOOGLE_API_KEY', ''))" >> env.py && \
     echo "os.environ.setdefault('OPENAI_API_KEY', os.getenv('OPENAI_API_KEY', ''))" >> env.py && \
     echo "os.environ.setdefault('GROQ_API_KEY', os.getenv('GROQ_API_KEY', ''))" >> env.py && \
-    echo "os.environ.setdefault('OLLAMA_CLIENT_HOST', 'ollama:11434')" >> env.py
+    echo "os.environ.setdefault('OLLAMA_CLIENT_HOST', 'http://ollama:11434')" >> env.py
 
 # Apply database migrations
 #RUN  .requirements/bin/python manage.py migrate
