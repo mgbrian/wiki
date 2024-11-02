@@ -20,6 +20,11 @@ const resultsBox = document.getElementById("results-box");
 const SEARCH_ENDPOINT = "/search";
 const DOCUMENT_ENDPOINT_PREFIX = "/document";
 
+// How long to wait after a keyboard input to search. This is to avoid bombarding
+// the server with a search query for every keystroke.
+const SEARCH_DELAY = 500; // MS
+let searchTimeoutId; // pointer to setTimeout call
+
 document.addEventListener(
   "DOMContentLoaded",
   toggleSemanticSearchSliderVisibility,
@@ -40,7 +45,11 @@ semanticSearchSlider.addEventListener("change", (event) => {
   updateSearchResults();
 });
 
-searchInputBox.addEventListener("input", updateSearchResults);
+searchInputBox.addEventListener("input", () => {
+  // Clear previous timer if there's one.'
+  clearTimeout(searchTimeoutId);
+  searchTimeoutId = setTimeout(updateSearchResults, SEARCH_DELAY);
+});
 
 /* Send the current contents of the search box to the backend and update the
    results box with the results.
