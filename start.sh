@@ -22,4 +22,11 @@ fi
 python -c "from llm.apis import OllamaAPI; OllamaAPI().pull_model('nomic-embed-text')"
 python manage.py migrate
 
-hypercorn --workers=3 --bind 0.0.0.0:5000 app:app
+# Log verbosely to the terminal in DEBUG mode
+if [[ "$DEBUG" == "1" ]]; then
+    hypercorn --log-level DEBUG --access-logfile - --workers=3 --bind 0.0.0.0:5000 app:app
+else
+    # Log silently to a file
+    hypercorn --log-level WARNING --access-logfile /var/log/hypercorn_access.log --error-logfile /var/log/hypercorn_error.log --workers=3 --bind 0.0.0.0:5000 app:app
+fi
+# hypercorn --workers=3 --bind 0.0.0.0:5000 app:app
