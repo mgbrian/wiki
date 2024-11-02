@@ -4,8 +4,13 @@ import uuid
 
 from django.conf import settings
 from django.db import models
-import ollama
+from ollama import Client
 from pgvector.django import VectorField, HnswIndex
+
+import env
+
+
+ollama_client = Client(host=os.environ.get("OLLAMA_CLIENT_HOST"))
 
 
 def documents_path():
@@ -144,11 +149,17 @@ def calculate_embeddings(text):
     """
     if not text:
         return None
-    # This calls this:
-    # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
-    # TODO: Pull embeddings model in install script.
-    api_response = ollama.embed(model="nomic-embed-text", input=text)
-    embeddings_list = api_response.get('embeddings')
+    try:
+        # This calls this:
+        # https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
+        api_response = ollama_client.embed(model="nomic-embed-text", input=text)
+        embeddings_list = api_response.get('embeddings')
+
+    # TODO: Handle more specific exceptions, e.g.
+    # ollama._types.ResponseError: model requires more system memory (284.9 MiB) than is available (71.0 MiB)
+    except Exception as e:
+        print(f"Error generating embeddings for {text}: {e}")
+        return None
 
     # TODO: Find out if there are any non-error situation where embeddings are
     # not returned. If not, raise an error here instead of returning None.
