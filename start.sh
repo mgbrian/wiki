@@ -2,8 +2,19 @@
 
 # Differentiate between Docker/ local dev setups.
 if [ -d "/app/.requirements" ]; then
+    # Create media folder if it doesn't exist.
+    if [ ! -d "/app/media" ]; then
+        mkdir /app/media
+        echo "Folder 'media' created."
+    fi
+
     source /app/.requirements/bin/activate
 else
+    if [ ! -d "media" ]; then
+        mkdir media
+        echo "Folder 'media' created."
+    fi
+
     source .requirements/bin/activate
 fi
 
