@@ -2,9 +2,13 @@
 
 Use this if certificates have not been generated before on the current server.
 
-If there are existing certificates somewhere, you can just copy them into the `certs` folder and skip the steps below.
+## Option 1 - Copying Existing Certificates from Elsewhere
+If there are existing certificates somewhere, they can be copied into the `certs` folder here and will automatically get synced to the Nginx and Certbot containers. The folder structure should look like this, where `DOMAIN_NAME` is the same value set in the `dockerenv` file (see top-level instructions):
+   * `certs/live/<DOMAIN_NAME>/fullchain.pem`
+   * `certs/live/<DOMAIN_NAME>/privkey.pem`
 
-1. Fill in the EMAIL and DOMAIN NAME in `docker-compose.yml` and save.
+## Option 2 - Generating Fresh Certificates
+1. Fill in the actual EMAIL and DOMAIN NAME in the `docker-compose.yml` file here and save.
 
    _TODO: Figure out why these aren't being picked up from the env file._
 
