@@ -4,7 +4,7 @@
 
 ### Sans Docker
 
-The installer script below has only been written to target macOS, Debian or Alpine. The app itself should work on any Unix-based OS but you'll have to figure out the installation process (or just use Docker!).
+The installer script below targets macOS, Debian or Alpine. The app itself should work on any Unix-based OS but you'll have to figure out the installation process (or just use Docker!).
 
 **The first time you pull the repository:**
 
