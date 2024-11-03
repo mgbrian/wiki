@@ -395,9 +395,6 @@ main.admin-page {
     padding: 0;
     list-style: none;
     font-size: 0.85rem;
-    border: 0.5px solid #edecec;
-
-    border: 4px solid #e0dddd;
     border-radius: 10px;
     overflow: hidden;
 }
@@ -405,6 +402,7 @@ main.admin-page {
 #file-upload-queue {
     font-size: 0.75rem;
     border-radius: 0;
+    border: 4px solid #e0dddd;
     transition: transform 250ms ease-in-out;
     transform-origin: top;
 }
