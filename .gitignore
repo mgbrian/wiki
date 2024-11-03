@@ -168,4 +168,5 @@ certbot/certs
 # venv folder
 .requirements/
 media/
+log/
 .DS_Store
