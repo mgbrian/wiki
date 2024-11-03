@@ -43,15 +43,15 @@ The installer script below targets macOS, Debian or Alpine. The app itself shoul
 
 **Ideally** Run the app using the start script. This runs it using Hypercorn:
 
-    ```
-    ./start.sh
-    ```
+ ```
+ ./start.sh
+ ```
 
 **OR** Run the app's dev server directly:
 
-    ```
-    source .requirements/bin/activate && python manage.py migrate && python app.py
-    ```
+ ```
+ source .requirements/bin/activate && python manage.py migrate && python app.py
+ ```
 
 ### With Docker
 
