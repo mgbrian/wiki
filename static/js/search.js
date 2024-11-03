@@ -22,7 +22,10 @@ const DOCUMENT_ENDPOINT_PREFIX = "/document";
 
 // How long to wait after a keyboard input to search. This is to avoid bombarding
 // the server with a search query for every keystroke.
-const SEARCH_DELAY = 500; // MS
+const BASE_DELAY = 500; // milliseconds. baseline delay
+const MAX_DELAY = 2000; // cap to prevent excessive delays
+let lastKeystrokeTime = Date.now();
+let adaptiveDelay = BASE_DELAY;
 let searchTimeoutId; // pointer to setTimeout call
 
 document.addEventListener(
@@ -47,8 +50,27 @@ semanticSearchSlider.addEventListener("change", (event) => {
 
 searchInputBox.addEventListener("input", () => {
   // Clear previous timer if there's one.'
+  // This is at the head of the algorithm so that initial input delay is are
+  // influenced by the previous state of the input box
+  // TODO: Reason through every case.
   clearTimeout(searchTimeoutId);
-  searchTimeoutId = setTimeout(updateSearchResults, SEARCH_DELAY);
+  searchTimeoutId = setTimeout(updateSearchResults, adaptiveDelay);
+
+  const currentTime = Date.now();
+  const timeSinceLastKeystroke = currentTime - lastKeystrokeTime;
+  lastKeystrokeTime = currentTime;
+
+  // When the input is emptied out, reset delay to BASE_DELAY so the first input
+  // next time doesn't have to wait potentially up to MAX_DELAY.
+  if (searchInputBox.value === "") {
+    adaptiveDelay = BASE_DELAY;
+  } else {
+    // Adjust delay based on typing speed, capped at MAX_DELAY
+    adaptiveDelay = Math.min(
+      Math.max(timeSinceLastKeystroke * 1.1, BASE_DELAY),
+      MAX_DELAY,
+    );
+  }
 });
 
 /* Send the current contents of the search box to the backend and update the
