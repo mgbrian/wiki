@@ -30,7 +30,7 @@ The installer script below has only been written to target macOS, Debian or Alpi
 4. Populate the environment variables accordingly:
 
    ```
-   source .requirements/bin/activate && python3 manage.py migrate
+   source .requirements/bin/activate && python manage.py migrate
    ```
 
 5. Make the app runner script executable.
@@ -41,17 +41,17 @@ The installer script below has only been written to target macOS, Debian or Alpi
 
 #### Running the Server
 
-**Either** Run the app's dev server directly:
+**Ideally** Run the app using the start script. This runs it using Hypercorn:
 
-   ```
-   source .requirements/bin/activate && python3 app.py
-   ```
+    ```
+    ./start.sh
+    ```
 
-**OR** Run the start script. This runs the app using Hypercorn:
+**OR** Run the app's dev server directly:
 
-   ```
-   ./start.sh
-   ```
+    ```
+    source .requirements/bin/activate && python manage.py migrate && python app.py
+    ```
 
 ### With Docker
 
@@ -65,6 +65,7 @@ The installer script below has only been written to target macOS, Debian or Alpi
    - If all the steps above were followed, it should be accessible at `https://localhost` locally or publicly at `https://<DOMAIN_NAME>`. This uses Nginx as an added layer in front of the app server.
 
    Visually the two options look something like this:
+
    ```
       [BROWSER] --> [Hypercorn on port <PORT>] --> [APP]
       [BROWSER] --> [Nginx on port 80/443] --> [Hypercorn on port <PORT>] --> [APP]
