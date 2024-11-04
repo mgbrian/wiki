@@ -27,11 +27,7 @@ The installer script below targets macOS, Debian or Alpine. The app itself shoul
    The installation step will install all requirements in a `venv` folder named `.requirements` and collect all required
    environment variables in a file named `env.py`.
 
-4. Populate the environment variables accordingly:
-
-   ```
-   source .requirements/bin/activate && python manage.py migrate
-   ```
+4. Populate the environment variables accordingly.
 
 5. Make the app runner script executable.
 
