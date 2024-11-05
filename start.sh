@@ -1,15 +1,18 @@
 #!/bin/sh
 
+# Set DEBUG to 0 if not already defined.
+export DEBUG=${DEBUG:-0}
+
 if [ -d "/app" ]; then
     RUNNING_ON_DOCKER=true
+    LOG_DIR="/var/log"
+    MEDIA_DIR="/app/media"
+    VENV_DIR="/app/.requirements"
 else
     RUNNING_ON_DOCKER=false
-fi
-
-if [ "$RUNNING_ON_DOCKER" = true ]; then
-    LOG_DIR="/var/log"
-else
     LOG_DIR="./log"
+    MEDIA_DIR="./media"
+    VENV_DIR=".requirements"
 fi
 
 # Create log directory if it doesn't exist.
@@ -18,27 +21,18 @@ if [ ! -d "$LOG_DIR" ]; then
     echo "Log directory '$LOG_DIR' created."
 fi
 
-# Set DEBUG to 0 if not already defined.
-export DEBUG=${DEBUG:-0}
-
+# Create media folder if it doesn't exist.
 if [ "$RUNNING_ON_DOCKER" = true ]; then
-    # Create media folder if it doesn't exist.
-    if [ ! -d "/app/media" ]; then
-        mkdir -p /app/media
-        echo "Folder 'media' created."
+    if [ ! -d "$MEDIA_DIR" ]; then
+        mkdir -p "$MEDIA_DIR"
+        echo "'media' folder created at $MEDIA_DIR."
     fi
 
-    source /app/.requirements/bin/activate
-else
-    if [ ! -d "media" ]; then
-        mkdir -p media
-        echo "Folder 'media' created."
-    fi
-
-    source .requirements/bin/activate
 fi
 
-# Pull models and apply migrations.
+source "$VENV_DIR"/bin/activate
+
+# Pull Ollama models.
 if [ -f "dependencies/models.txt" ]; then
     while IFS= read -r model; do
         echo "Pulling $model..."
@@ -46,9 +40,10 @@ if [ -f "dependencies/models.txt" ]; then
     done < dependencies/models.txt
 fi
 
+ # Apply db migrations.
 python manage.py migrate
 
-# Start Hypercorn with different logging configurations based on DEBUG mode.
+# Start Hypercorn with different logging configurations based on DEBUG flag.
 if [ "$DEBUG" = "1" ]; then
     echo "\nServer running in DEBUG mode. Set the DEBUG environment variable to 0 in production!\n"
     hypercorn --log-level DEBUG --access-logfile - --workers=3 --bind 0.0.0.0:5000 app:app
