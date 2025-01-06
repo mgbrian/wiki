@@ -4,7 +4,7 @@ services:
     image: certbot/certbot
     entrypoint: /bin/sh -c 'certbot certonly --standalone --non-interactive --agree-tos -m "<FILL IN EMAIL>" -d "<FILL IN DOMAIN NAME>"
     env_file:
-      - ../dockerenv
+      - ../../dockerenv
     volumes:
       - ./certs:/etc/letsencrypt
     ports:

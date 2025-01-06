@@ -39,20 +39,20 @@ The installer script below targets macOS, Debian or Alpine. The app itself shoul
 
 **Ideally** Run the app using the start script. This runs it using Hypercorn:
 
- ```
- ./start.sh
- ```
+```
+./start.sh
+```
 
 **OR** Run the app's dev server directly:
 
- ```
- source .requirements/bin/activate && python manage.py migrate && python app.py
- ```
+```
+source .requirements/bin/activate && python manage.py migrate && python app.py
+```
 
 ### With Docker
 
 1. Duplicate `dockerenv_sample` into `dockerenv` and update all variables accordingly. If this is not a production deployment, don't set `DOMAIN_NAME`, and skip step 2 below.
-2. Obtain SSL certificates if this hasn't been done before for the current server. Follow the steps in [certbot/README.md](certbot/README.md).
+2. Obtain SSL certificates if this hasn't been done before for the current server. Follow the steps in [docker/certbot/README.md](docker/certbot/README.md).
 3. `docker compose up --build` or `sudo docker compose up --build` if you get a permission error (this may happen due to the certificates folder created by Certbot in step 2 being restricted).
 
    (`<PORT>` and `<DOMAIN_NAME>` as set in `dockerenv`)
