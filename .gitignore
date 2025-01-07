@@ -164,7 +164,7 @@ cython_debug/
 
 env.py
 dockerenv
-certbot/certs
+docker/certbot/certs
 # venv folder
 .requirements/
 media/
