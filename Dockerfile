@@ -2,7 +2,8 @@ FROM python:3.11-alpine
 
 WORKDIR /app
 
-RUN apk update && apk add --no-cache curl libmagic openssl
+# ncurses for tput, needed by install.sh.
+RUN apk update && apk add --no-cache curl git libmagic openssl ncurses
 
 # Use Ollama Docker container instead.
 # RUN curl -fsSL https://ollama.com/install.sh | sh
