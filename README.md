@@ -1,5 +1,11 @@
 # Wiki
 
+Wiki is an information organisation tool that enables search of text and nebulous concepts captured in documents and images (typed or handwritten).
+
+Wiki transcribes, describes and indexes uploaded content, allowing both verbatim text and semantic search of concepts captured in the corpus.
+
+The current version supports PDF documents and images, with audio and video upcoming.
+
 ## Deployment
 
 ### Sans Docker
