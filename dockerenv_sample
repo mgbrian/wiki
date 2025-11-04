@@ -11,6 +11,9 @@ POSTGRES_DB=sampledb
 # Don't change unless using another Postgres instance.
 POSTGRES_HOST=db
 
+# Gemini API key
+GOOGLE_API_KEY=
+
 # App service container port.
 PORT=5000
 
